@@ -7,7 +7,7 @@ import (
   "gorm.io/gorm"
 )
 
-func ConnectToDB() {
+func ConnectToDB() (*gorm.DB, error) {
   dbHost := GetEnv("DB_HOST")
   dbUsername := GetEnv("DB_USERNAME")
   dbPassword := GetEnv("DB_PASSWORD")
@@ -17,7 +17,16 @@ func ConnectToDB() {
   dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUsername, dbPassword, dbName, dbPort)
   db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
   if err != nil {
-    panic(err)
+    return nil, err
+  }
+
+  return db, nil
+}
+
+func AutoMigrates() {
+  db, err := ConnectToDB()
+  if err != nil {
+    panic("Could not connect to the database")
   }
 
   db.AutoMigrate(&models.User{}, &models.Roles{})
