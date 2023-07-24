@@ -2,6 +2,8 @@ package auth
 
 import (
   "github.com/gin-gonic/gin"
+  "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/models"
   "github.com/yandens/petik.com-go/src/utils"
 )
 
@@ -13,9 +15,32 @@ type RegisterInput struct {
 
 func Register(c *gin.Context) {
   var input RegisterInput
+  var role models.Roles
+
+  db, err := configs.ConnectToDB()
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+  }
 
   if err := c.ShouldBindJSON(&input); err != nil {
     utils.JSONResponse(c, 400, false, "Input must be JSON", nil)
   }
 
+  err = db.Where("role = ?", "basic").First(&role).Error
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not find role", nil)
+  }
+
+  user := models.User{
+    Email:    input.Email,
+    Password: input.Password,
+    RoleID:   role.ID,
+  }
+
+  err = db.Create(&user).Error
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not create user", nil)
+  }
+
+  utils.JSONResponse(c, 200, true, "Success", nil)
 }
