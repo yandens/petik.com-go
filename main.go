@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+  configs.ConnectToDB()
   router := gin.Default()
 
   router.Use(cors.New(cors.Config{
