@@ -5,6 +5,7 @@ import (
   "github.com/yandens/petik.com-go/src/configs"
   "github.com/yandens/petik.com-go/src/models"
   "github.com/yandens/petik.com-go/src/utils"
+  "golang.org/x/crypto/bcrypt"
 )
 
 type RegisterInput struct {
@@ -26,6 +27,15 @@ func Register(c *gin.Context) {
     utils.JSONResponse(c, 400, false, "Input must be JSON", nil)
   }
 
+  if input.Password != input.ConfirmPassword {
+    utils.JSONResponse(c, 400, false, "Password and confirm password must be same", nil)
+  }
+
+  hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not hash password", nil)
+  }
+
   err = db.Where("role = ?", "basic").First(&role).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not find role", nil)
@@ -33,7 +43,7 @@ func Register(c *gin.Context) {
 
   user := models.User{
     Email:    input.Email,
-    Password: input.Password,
+    Password: string(hashedPassword),
     RoleID:   role.ID,
   }
 
