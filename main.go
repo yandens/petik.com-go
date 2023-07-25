@@ -4,6 +4,7 @@ import (
   "github.com/gin-contrib/cors"
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/utils"
 )
 
 func main() {
@@ -19,9 +20,7 @@ func main() {
 
   // routes
   router.GET("/", func(c *gin.Context) {
-    c.JSON(200, gin.H{
-      "message": "Hello world!",
-    })
+    utils.JSONResponse(c, 200, true, "Server Running Well", nil)
   })
 
   router.Run(configs.GetEnv("HOST") + ":" + configs.GetEnv("PORT"))
