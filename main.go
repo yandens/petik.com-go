@@ -4,6 +4,7 @@ import (
   "github.com/gin-contrib/cors"
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/controllers/auth"
   "github.com/yandens/petik.com-go/src/utils"
 )
 
@@ -19,9 +20,18 @@ func main() {
   }))
 
   // routes
+  // default route
   router.GET("/", func(c *gin.Context) {
     utils.JSONResponse(c, 200, true, "Server Running Well", nil)
   })
+
+  // api routes
+  api := router.Group("/api")
+
+  // auth routes
+  authRoutes := api.Group("/auth")
+  authRoutes.POST("/register", auth.Register)
+  authRoutes.POST("/login", auth.Login)
 
   router.Run(configs.GetEnv("HOST") + ":" + configs.GetEnv("PORT"))
 }
