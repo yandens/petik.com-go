@@ -54,9 +54,10 @@ func Register(c *gin.Context) {
 
   // create user
   user := models.User{
-    Email:    input.Email,
-    Password: string(hashedPassword),
-    RoleID:   role.ID,
+    Email:     input.Email,
+    Password:  string(hashedPassword),
+    RoleID:    role.ID,
+    IsVerifed: false,
   }
 
   // send verify email
