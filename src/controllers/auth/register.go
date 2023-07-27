@@ -59,6 +59,9 @@ func Register(c *gin.Context) {
     RoleID:   role.ID,
   }
 
+  // send verify email
+  utils.SendEmail(user)
+
   err = db.Create(&user).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not create user", nil)
