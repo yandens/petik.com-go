@@ -26,8 +26,27 @@ func VerifyEmail(c *gin.Context) {
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
   }
+
   err = db.Model(&models.User{}).Where("id = ?", userID).Update("is_verified", true).Error
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not update user", nil)
+  }
+
+  // get user
+  var user models.User
+  if err := db.Model(&models.User{}).Where("id = ?", userID).First(&user).Error; err != nil {
+    utils.JSONResponse(c, 400, false, "User not found", nil)
+  }
+
+  // generate token
+  token, err = utils.GenerateToken(user.ID, user.Email, user.Role.Role)
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not generate token", nil)
+  }
 
   // return response
-  utils.JSONResponse(c, 200, true, "Success", nil)
+  utils.JSONResponse(c, 200, true, "Success", gin.H{
+    "email": user.Email,
+    "token": token,
+  })
 }
