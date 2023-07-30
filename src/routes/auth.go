@@ -10,4 +10,6 @@ func AuthRoutes(router *gin.RouterGroup) {
   authRoute.POST("/login", auth.Login)
   authRoute.POST("/register", auth.Register)
   authRoute.GET("/verify-email", auth.VerifyEmail)
+  authRoute.POST("/forgot-password", auth.ForgotPassword)
+  authRoute.POST("/reset-password", auth.ResetPassword)
 }
