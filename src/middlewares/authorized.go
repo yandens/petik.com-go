@@ -35,13 +35,20 @@ func Authorized(roles ...string) gin.HandlerFunc {
       return
     }
 
-    // check if user role is authorized
-    if len(roles) > 0 {
-      for _, role := range roles {
-        if validToken.Claims.(jwt.MapClaims)["role"].(string) == role {
-          c.Next()
-          return
-        }
+    // check roles length
+    if len(roles) < 0 {
+      utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+      c.Abort()
+      return
+    }
+
+    for _, role := range roles {
+      if validToken.Claims.(jwt.MapClaims)["role"].(string) == role {
+        c.Set("id", validToken.Claims.(jwt.MapClaims)["id"].(string))
+        c.Set("email", validToken.Claims.(jwt.MapClaims)["email"].(string))
+        c.Set("role", validToken.Claims.(jwt.MapClaims)["role"].(string))
+        c.Next()
+        return
       }
 
       utils.JSONResponse(c, 401, false, "Unauthorized", nil)
