@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-  configs.AutoMigrates()
   router := gin.Default()
 
   router.Use(cors.New(cors.Config{
