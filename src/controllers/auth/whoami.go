@@ -6,9 +6,9 @@ import (
 )
 
 func WhoAmI(c *gin.Context) {
-  id := c.GetString("id")
-  email := c.GetString("email")
-  role := c.GetString("role")
+  id, _ := c.Get("id")
+  email, _ := c.Get("email")
+  role, _ := c.Get("role")
 
   if id == "" || email == "" || role == "" {
     utils.JSONResponse(c, 401, false, "Unauthorized", nil)

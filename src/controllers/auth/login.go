@@ -21,29 +21,34 @@ func Login(c *gin.Context) {
   db, err := configs.ConnectToDB()
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+    return
   }
 
   // validate input
   if err := c.ShouldBindJSON(&input); err != nil {
     utils.JSONResponse(c, 400, false, "Input must be JSON", nil)
+    return
   }
 
   // find user by email
-  err = db.Where("email = ?", input.Email).First(&user).Error
+  err = db.Joins("Role").Model(&models.User{}).Where("email = ?", input.Email).First(&user).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Incorrect Email or Password", nil)
+    return
   }
 
   // compare password
   err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
   if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
     utils.JSONResponse(c, 400, false, "Incorrect Email or Password", nil)
+    return
   }
 
   // generate token
   token, err := utils.GenerateToken(user.ID, user.Email, user.Role.Role)
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not generate token", nil)
+    return
   }
 
   // return response

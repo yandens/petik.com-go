@@ -18,6 +18,7 @@ func ForgotPassword(c *gin.Context) {
   db, err := configs.ConnectToDB()
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+    return
   }
 
   // get email from request body
