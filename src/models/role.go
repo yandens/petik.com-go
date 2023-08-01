@@ -2,7 +2,8 @@ package models
 
 import "gorm.io/gorm"
 
-type Roles struct {
+type Role struct {
   gorm.Model
   Role string `gorm:"unique;not null"`
+  User []User `gorm:"foreignKey:RoleID"`
 }

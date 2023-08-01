@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+  //db.MigrateAll()
+  //db.RollbackAll()
+  //db.SeedAll()
   router := gin.Default()
 
   router.Use(cors.New(cors.Config{
