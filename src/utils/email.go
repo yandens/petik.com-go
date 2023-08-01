@@ -25,6 +25,6 @@ func SendEmail(user models.User) {
 
   // send email
   if err := d.DialAndSend(m); err != nil {
-    fmt.Println("Could not send email")
+    fmt.Println("Could not send email because: ", err)
   }
 }
