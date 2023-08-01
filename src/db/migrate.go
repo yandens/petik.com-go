@@ -5,7 +5,7 @@ import (
   "github.com/yandens/petik.com-go/src/models"
 )
 
-func migrateAll() {
+func MigrateAll() {
   // connect to db
   db, err := configs.ConnectToDB()
   if err != nil {
@@ -14,12 +14,12 @@ func migrateAll() {
 
   // migrate all models
   migrator := db.Migrator()
-  if err := migrator.AutoMigrate(&models.User{}, &models.Roles{}, &models.UserBio{}); err != nil { // add more models here
+  if err := migrator.AutoMigrate(&models.Role{}, &models.User{}, &models.UserBio{}); err != nil { // add more models here
     panic(err)
   }
 }
 
-func rollbackAll() {
+func RollbackAll() {
   // connect to db
   db, err := configs.ConnectToDB()
   if err != nil {
@@ -28,7 +28,7 @@ func rollbackAll() {
 
   // rollback all models
   migrator := db.Migrator()
-  if err := migrator.DropTable(&models.User{}, &models.Roles{}); err != nil {
+  if err := migrator.DropTable(&models.Role{}, &models.User{}, &models.UserBio{}); err != nil {
     panic(err)
   }
 }

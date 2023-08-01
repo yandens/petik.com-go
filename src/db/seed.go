@@ -5,7 +5,7 @@ import (
   "github.com/yandens/petik.com-go/src/models"
 )
 
-func seedAll() {
+func SeedAll() {
   // connect to db
   db, err := configs.ConnectToDB()
   if err != nil {
@@ -13,7 +13,7 @@ func seedAll() {
   }
 
   // define roles
-  roles := []models.Roles{
+  roles := []models.Role{
     {Role: "user"},
     {Role: "admin"},
   }
