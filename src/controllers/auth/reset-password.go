@@ -15,6 +15,13 @@ type ResetPasswordInput struct {
 }
 
 func ResetPassword(c *gin.Context) {
+  // connect to database
+  db, err := configs.ConnectToDB()
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+    return
+  }
+
   // get token from query string
   token := c.Query("token")
   if token == "" {
@@ -53,12 +60,6 @@ func ResetPassword(c *gin.Context) {
   }
 
   // update user
-  db, err := configs.ConnectToDB()
-  if err != nil {
-    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
-    return
-  }
-
   err = db.Model(&models.User{}).Where("id = ?", userID).Update("password", string(hashedPassword)).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not update user", nil)

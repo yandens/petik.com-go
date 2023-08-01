@@ -9,6 +9,12 @@ import (
 )
 
 func VerifyEmail(c *gin.Context) {
+  // connect to database
+  db, err := configs.ConnectToDB()
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+  }
+
   // get token from url
   token := c.Query("token")
 
@@ -22,11 +28,6 @@ func VerifyEmail(c *gin.Context) {
   userID := validToken.Claims.(jwt.MapClaims)["id"]
 
   // update user
-  db, err := configs.ConnectToDB()
-  if err != nil {
-    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
-  }
-
   err = db.Model(&models.User{}).Where("id = ?", userID).Update("is_verified", true).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not update user", nil)

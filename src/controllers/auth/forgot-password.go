@@ -14,6 +14,12 @@ type ForgotPasswordInput struct {
 func ForgotPassword(c *gin.Context) {
   var input ForgotPasswordInput
 
+  // connect to database
+  db, err := configs.ConnectToDB()
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+  }
+
   // get email from request body
   if err := c.ShouldBindJSON(&input); err != nil {
     utils.JSONResponse(c, 400, false, "Invalid request", nil)
@@ -21,11 +27,6 @@ func ForgotPassword(c *gin.Context) {
   }
 
   // find user by email
-  db, err := configs.ConnectToDB()
-  if err != nil {
-    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
-  }
-
   var user models.User
   if err := db.Where("email = ?", input.Email).First(&user).Error; err != nil {
     utils.JSONResponse(c, 400, false, "Email not found", nil)
