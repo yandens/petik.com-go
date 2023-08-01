@@ -43,10 +43,10 @@ func Authorized(roles ...string) gin.HandlerFunc {
     }
 
     for _, role := range roles {
-      if validToken.Claims.(jwt.MapClaims)["role"].(string) == role {
-        c.Set("id", validToken.Claims.(jwt.MapClaims)["id"].(string))
-        c.Set("email", validToken.Claims.(jwt.MapClaims)["email"].(string))
-        c.Set("role", validToken.Claims.(jwt.MapClaims)["role"].(string))
+      if validToken.Claims.(jwt.MapClaims)["role"] == role {
+        c.Set("id", validToken.Claims.(jwt.MapClaims)["id"])
+        c.Set("email", validToken.Claims.(jwt.MapClaims)["email"])
+        c.Set("role", validToken.Claims.(jwt.MapClaims)["role"])
         c.Next()
         return
       }
