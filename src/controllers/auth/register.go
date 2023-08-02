@@ -59,20 +59,20 @@ func Register(c *gin.Context) {
 
   // create user
   user := models.User{
-    Email:     input.Email,
-    Password:  string(hashedPassword),
-    RoleID:    role.ID,
-    IsVerifed: false,
+    Email:      input.Email,
+    Password:   string(hashedPassword),
+    RoleID:     role.ID,
+    IsVerified: false,
   }
-
-  // send verify email
-  utils.SendEmail(user)
 
   err = db.Create(&user).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not create user", nil)
     return
   }
+
+  // send verify email
+  utils.SendEmail(user, "verify-email")
 
   // return response
   utils.JSONResponse(c, 200, true, "Success", nil)
