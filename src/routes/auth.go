@@ -12,6 +12,6 @@ func AuthRoutes(router *gin.RouterGroup) {
   authRoute.POST("/register", auth.Register)
   authRoute.GET("/verify-email", auth.VerifyEmail)
   authRoute.POST("/forgot-password", auth.ForgotPassword)
-  authRoute.POST("/reset-password", auth.ResetPassword)
+  authRoute.PUT("/reset-password", auth.ResetPassword)
   authRoute.GET("/whoami", middlewares.Authorized("user", "admin"), auth.WhoAmI)
 }
