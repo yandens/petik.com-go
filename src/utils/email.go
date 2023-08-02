@@ -7,13 +7,13 @@ import (
   "gopkg.in/gomail.v2"
 )
 
-func SendEmail(user models.User) {
+func SendEmail(user models.User, endpoint string) {
   token, err := GenerateToken(user.ID, user.Email, user.Role.Role)
   if err != nil {
     fmt.Println("Could not generate token")
   }
 
-  linkVerify := fmt.Sprintf("%s/auth/verify?token=%s", configs.GetEnv("APP_URL"), token)
+  linkVerify := fmt.Sprintf("%s/api/auth/%s?token=%s", configs.GetEnv("APP_URL"), endpoint, token)
 
   m := gomail.NewMessage()
   m.SetHeader("From", configs.GetEnv("EMAIL_USERNAME"))
