@@ -2,7 +2,6 @@ package auth
 
 import (
   "github.com/gin-gonic/gin"
-  "github.com/golang-jwt/jwt/v5"
   "github.com/yandens/petik.com-go/src/configs"
   "github.com/yandens/petik.com-go/src/models"
   "github.com/yandens/petik.com-go/src/utils"
@@ -30,11 +29,15 @@ func VerifyEmail(c *gin.Context) {
     return
   }
 
-  // get user id from token
-  userID := validToken.Claims.(jwt.MapClaims)["id"]
+  // get user claims from token
+  claims, err := utils.TokenClaims(validToken)
+  if err != nil {
+    utils.JSONResponse(c, 400, false, "Invalid token", nil)
+    return
+  }
 
   // update user
-  err = db.Model(&models.User{}).Where("id = ?", userID).Update("is_verified", true).Error
+  err = db.Model(&models.User{}).Where("id = ?", claims["id"].(int)).Update("is_verified", true).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not update user", nil)
     return
@@ -42,7 +45,7 @@ func VerifyEmail(c *gin.Context) {
 
   // get user
   var user models.User
-  if err := db.Model(&models.User{}).Where("id = ?", userID).First(&user).Error; err != nil {
+  if err := db.Joins("Role").Model(&models.User{}).Where("id = ?", claims["id"].(int)).First(&user).Error; err != nil {
     utils.JSONResponse(c, 400, false, "User not found", nil)
     return
   }
