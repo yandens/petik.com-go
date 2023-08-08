@@ -36,17 +36,23 @@ func VerifyEmail(c *gin.Context) {
     return
   }
 
-  // update user
-  err = db.Model(&models.User{}).Where("id = ?", claims["id"].(int)).Update("is_verified", true).Error
-  if err != nil {
-    utils.JSONResponse(c, 500, false, "Could not update user", nil)
+  // get user
+  var user models.User
+  if err := db.Joins("Role").Model(&models.User{}).Where("users.id = ?", claims["id"]).First(&user).Error; err != nil {
+    utils.JSONResponse(c, 400, false, "User not found", nil)
     return
   }
 
-  // get user
-  var user models.User
-  if err := db.Joins("Role").Model(&models.User{}).Where("id = ?", claims["id"].(int)).First(&user).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "User not found", nil)
+  // check if user is already verified
+  if user.IsVerified {
+    utils.JSONResponse(c, 400, false, "User already verified", nil)
+    return
+  }
+
+  // update user
+  err = db.Model(&models.User{}).Where("id = ?", user.ID).Update("is_verified", true).Error
+  if err != nil {
+    utils.JSONResponse(c, 500, false, "Could not update user", nil)
     return
   }
 

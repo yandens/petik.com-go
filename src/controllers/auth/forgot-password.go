@@ -35,7 +35,7 @@ func ForgotPassword(c *gin.Context) {
   }
 
   // send email
-  utils.SendEmail(user, "reset-password")
+  utils.SendEmail(user, "reset-password", "Reset Password")
 
   // return response
   utils.JSONResponse(c, 200, true, "Success", nil)

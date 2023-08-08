@@ -63,7 +63,7 @@ func ResetPassword(c *gin.Context) {
   }
 
   // update user
-  err = db.Model(&models.User{}).Where("id = ?", claims["id"].(int)).Update("password", string(hashedPassword)).Error
+  err = db.Model(&models.User{}).Where("id = ?", claims["id"]).Update("password", string(hashedPassword)).Error
   if err != nil {
     utils.JSONResponse(c, 500, false, "Could not update user", nil)
     return
