@@ -51,7 +51,7 @@ func Authorized(roles ...string) gin.HandlerFunc {
 
     for _, role := range roles {
       if user["role"] == role {
-        c.Set("id", user["id"].(int))
+        c.Set("id", user["id"])
         c.Set("email", user["email"])
         c.Set("role", user["role"])
         c.Next()
