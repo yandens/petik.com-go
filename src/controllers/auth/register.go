@@ -59,10 +59,11 @@ func Register(c *gin.Context) {
 
   // create user
   user := models.User{
-    Email:      input.Email,
-    Password:   string(hashedPassword),
-    RoleID:     role.ID,
-    IsVerified: false,
+    Email:       input.Email,
+    Password:    string(hashedPassword),
+    RoleID:      role.ID,
+    AccountType: "basic", // "basic" type is type for user that registered with email and password
+    IsVerified:  false,
   }
 
   err = db.Create(&user).Error
