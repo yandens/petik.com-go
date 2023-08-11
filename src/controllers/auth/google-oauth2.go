@@ -74,7 +74,7 @@ func GoogleOauth2Callback(c *gin.Context) {
   // check if user is already registered
   var user models.User
   if err := db.Model(&models.User{}).Where("email = ?", userInfo.Email).First(&user).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "User already registered but using basic way (not using oauth2), please login with that way", nil)
+    utils.JSONResponse(c, 400, false, "Email already registered", nil)
   }
 
   // create user

@@ -37,6 +37,11 @@ func Login(c *gin.Context) {
     return
   }
 
+  // check account type
+  if user.AccountType != "basic" {
+    utils.JSONResponse(c, 400, false, "Incorrect Email or Password", nil)
+  }
+
   // compare password
   err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
   if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
