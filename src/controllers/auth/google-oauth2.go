@@ -1,6 +1,7 @@
 package auth
 
 import (
+  "fmt"
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
   "github.com/yandens/petik.com-go/src/models"
@@ -73,8 +74,10 @@ func GoogleOauth2Callback(c *gin.Context) {
 
   // check if user is already registered
   var user models.User
-  if err := db.Model(&models.User{}).Where("email = ?", userInfo.Email).First(&user).Error; err != nil {
+  if err := db.Model(&models.User{}).Where("email = ?", userInfo.Email).First(&user).Error; err == nil {
+    fmt.Println(err)
     utils.JSONResponse(c, 400, false, "Email already registered", nil)
+    return
   }
 
   // create user
