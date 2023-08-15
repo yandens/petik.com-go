@@ -7,7 +7,7 @@ import (
   "github.com/yandens/petik.com-go/src/utils"
 )
 
-func GetUser(c *gin.Context) {
+func ReadBio(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
@@ -16,18 +16,18 @@ func GetUser(c *gin.Context) {
   }
 
   // get user id
-  id := c.Param("id")
+  id, _ := c.Get("id")
   if id == "" {
-    utils.JSONResponse(c, 400, false, "User id is required", nil)
+    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
     return
   }
 
-  // get user
-  var user models.User
-  if err := db.Joins("Role").Joins("UserBio").Model(&models.User{}).Where("users.id = ?", id).First(&user).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "User not found", nil)
+  // get user bio
+  var userBio models.UserBio
+  if err := db.Joins("User").Model(&models.UserBio{}).Where("user_id = ?", id).First(&userBio).Error; err != nil {
+    utils.JSONResponse(c, 400, false, "User bio not found", nil)
     return
   }
 
-  utils.JSONResponse(c, 200, true, "User retrieved successfully", user)
+  utils.JSONResponse(c, 200, true, "User bio retrieved successfully", userBio)
 }
