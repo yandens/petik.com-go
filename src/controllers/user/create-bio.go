@@ -49,6 +49,20 @@ func CreateBio(c *gin.Context) {
     return
   }
 
+  // get avatar file
+  avatar, err := c.FormFile("avatar")
+  if err != nil {
+    utils.JSONResponse(c, 400, false, "Avatar file is required", nil)
+    return
+  }
+
+  // upload avatar
+  url, err := utils.UploadAvatar(c, avatar, avatar.Filename)
+  if err != nil {
+    utils.JSONResponse(c, 400, false, "Failed to upload avatar", nil)
+    return
+  }
+
   // create user bio
   userBio := models.UserBio{
     UserID:    id.(uint),
@@ -57,7 +71,7 @@ func CreateBio(c *gin.Context) {
     Address:   input.Address,
     City:      input.City,
     Province:  input.Province,
-    Avatar:    input.Avatar,
+    Avatar:    url,
   }
 
   // save user bio
