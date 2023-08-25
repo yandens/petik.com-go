@@ -7,7 +7,7 @@ import (
   "mime/multipart"
 )
 
-func UploadAvatar(c *gin.Context, file *multipart.FileHeader, fileName string) (string, error) {
+func UploadToImagekit(c *gin.Context, file *multipart.FileHeader, fileName string) (string, error) {
   // construct imagekit
   opts := imagekit.Options{
     PublicKey:  configs.GetEnv("IMAGEKIT_PUBLIC_KEY"),
