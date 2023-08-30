@@ -1,4 +1,4 @@
-package user
+package bio
 
 import (
   "github.com/gin-gonic/gin"
