@@ -36,5 +36,8 @@ func main() {
   // user routes
   routes.UserRoutes(api)
 
+  // admin routes
+  routes.AdminRoutes(api)
+
   router.Run(configs.GetEnv("HOST") + ":" + configs.GetEnv("PORT"))
 }
