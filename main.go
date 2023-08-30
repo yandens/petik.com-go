@@ -33,9 +33,8 @@ func main() {
   // auth routes
   routes.AuthRoutes(api)
 
-  //authRoutes := api.Group("/auth")
-  //authRoutes.POST("/register", auth.Register)
-  //authRoutes.POST("/login", auth.Login)
+  // user routes
+  routes.UserRoutes(api)
 
   router.Run(configs.GetEnv("HOST") + ":" + configs.GetEnv("PORT"))
 }
