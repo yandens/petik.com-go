@@ -8,12 +8,13 @@ import (
 )
 
 type UpdateBioInput struct {
-  FirstName string `json:"firstName"`
-  LastName  string `json:"lastName"`
-  Address   string `json:"address"`
-  City      string `json:"city"`
-  Province  string `json:"province"`
-  Avatar    string `json:"avatar"`
+  FirstName   string `json:"firstName"`
+  LastName    string `json:"lastName"`
+  PhoneNumber string `json:"phoneNumber" binding:"min=12,max=13"`
+  Address     string `json:"address"`
+  City        string `json:"city"`
+  Province    string `json:"province"`
+  Avatar      string `json:"avatar"`
 }
 
 func UpdateBio(c *gin.Context) {

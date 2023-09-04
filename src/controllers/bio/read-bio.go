@@ -29,5 +29,16 @@ func ReadBio(c *gin.Context) {
     return
   }
 
-  utils.JSONResponse(c, 200, true, "User bio retrieved successfully", userBio)
+  utils.JSONResponse(c, 200, true, "User bio retrieved successfully", gin.H{
+    "bio_id":      userBio.ID,
+    "user_id":     userBio.User.ID,
+    "email":       userBio.User.Email,
+    "firstName":   userBio.FirstName,
+    "lastName":    userBio.LastName,
+    "phoneNumber": userBio.PhoneNumber,
+    "address":     userBio.Address,
+    "city":        userBio.City,
+    "province":    userBio.Province,
+    "avatar":      userBio.Avatar,
+  })
 }

@@ -8,11 +8,12 @@ import (
 )
 
 type CreateBioInput struct {
-  FirstName string `json:"firstName" binding:"required"`
-  LastName  string `json:"lastName" binding:"required"`
-  Address   string `json:"address" binding:"required"`
-  City      string `json:"city" binding:"required"`
-  Province  string `json:"province" binding:"required"`
+  FirstName   string `json:"firstName" binding:"required"`
+  LastName    string `json:"lastName" binding:"required"`
+  PhoneNumber string `json:"phoneNumber" binding:"required,min=12,max=13"`
+  Address     string `json:"address" binding:"required"`
+  City        string `json:"city" binding:"required"`
+  Province    string `json:"province" binding:"required"`
 }
 
 func CreateBio(c *gin.Context) {
@@ -34,8 +35,19 @@ func CreateBio(c *gin.Context) {
     return
   }
 
+  // type assertion convert interface{} to uint
+  var userID uint
+  switch id := id.(type) {
+  case float64:
+    userID = uint(id)
+  case uint:
+    userID = id
+  default:
+    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+  }
+
   // check if user bio already exists
-  isExist := db.Model(&models.UserBio{}).Where("user_id = ?", id).Take(&models.UserBio{}).RowsAffected
+  isExist := db.Model(&models.UserBio{}).Where("user_id = ?", userID).Take(&models.UserBio{}).RowsAffected
   if isExist == 1 {
     utils.JSONResponse(c, 400, false, "User bio already exists", nil)
     return
@@ -50,13 +62,14 @@ func CreateBio(c *gin.Context) {
 
   // create user bio
   userBio := models.UserBio{
-    UserID:    id.(uint),
-    FirstName: input.FirstName,
-    LastName:  input.LastName,
-    Address:   input.Address,
-    City:      input.City,
-    Province:  input.Province,
-    Avatar:    "",
+    UserID:      userID,
+    FirstName:   input.FirstName,
+    LastName:    input.LastName,
+    PhoneNumber: input.PhoneNumber,
+    Address:     input.Address,
+    City:        input.City,
+    Province:    input.Province,
+    Avatar:      "",
   }
 
   // save user bio
@@ -66,8 +79,15 @@ func CreateBio(c *gin.Context) {
   }
 
   utils.JSONResponse(c, 200, true, "User bio created successfully", gin.H{
-    "user_id": id,
-    "email":   email,
-    "userBio": userBio,
+    "bio_id":      userBio.ID, // id from bio table
+    "user_id":     userID,
+    "email":       email,
+    "firstName":   userBio.FirstName,
+    "lastName":    userBio.LastName,
+    "phoneNumber": userBio.PhoneNumber,
+    "address":     userBio.Address,
+    "city":        userBio.City,
+    "province":    userBio.Province,
+    "avatar":      userBio.Avatar,
   })
 }

@@ -37,7 +37,7 @@ func UploadAvatar(c *gin.Context) {
   }
 
   // update user avatar
-  if err := db.Model(&models.User{}).Where("id = ?", id).Update("avatar", url).Error; err != nil {
+  if err := db.Model(&models.UserBio{}).Where("id = ?", id).Update("avatar", url).Error; err != nil {
     utils.JSONResponse(c, 400, false, "Failed to update avatar", nil)
     return
   }

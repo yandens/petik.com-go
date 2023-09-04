@@ -1,9 +1,11 @@
 package utils
 
 import (
+  "encoding/base64"
   "github.com/codedius/imagekit-go"
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "io"
   "mime/multipart"
 )
 
@@ -19,9 +21,25 @@ func UploadToImagekit(c *gin.Context, file *multipart.FileHeader, fileName strin
     return "", err
   }
 
+  // open file
+  f, err := file.Open()
+  if err != nil {
+    return "", err
+  }
+  defer f.Close()
+
+  // read file
+  fileBytes, err := io.ReadAll(f)
+  if err != nil {
+    return "", err
+  }
+
+  // encode file into base64
+  fileBase64 := base64.StdEncoding.EncodeToString(fileBytes)
+
   // upload avatar
   ur := imagekit.UploadRequest{
-    File:     file,
+    File:     fileBase64,
     FileName: fileName,
     Folder:   "/avatars",
   }
