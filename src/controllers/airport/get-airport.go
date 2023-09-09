@@ -93,7 +93,7 @@ func GetAirportBySearch(c *gin.Context) {
   utils.JSONResponse(c, 200, true, "Airport retrieved successfully", data)
 }
 
-func GetAirportByIATA(IATA string) (interface{}, error) {
+func GetAirportByIATA(IATA string) (map[string]string, error) {
   // define url
   url := fmt.Sprintf("https://port-api.com/airport/search/%s", IATA)
 
@@ -115,6 +115,14 @@ func GetAirportByIATA(IATA string) (interface{}, error) {
     return nil, err
   }
 
+  // filter response
+  airportData := map[string]string{
+    "name":    data.Features[0].Properties.Name,
+    "city":    data.Features[0].Properties.Municipality,
+    "country": data.Features[0].Properties.Country.Name,
+    "iata":    data.Features[0].Properties.IATA,
+  }
+
   // return response
-  return data, nil
+  return airportData, nil
 }
