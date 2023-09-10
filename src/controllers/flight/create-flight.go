@@ -92,11 +92,11 @@ type APIResponse struct {
 }
 
 type FlightInput struct {
-  Airline     string `json:"airline"`
-  Origin      string `json:"origin"`
-  Destination string `json:"destination"`
-  Departure   string `json:"departure"`
-  Arrival     string `json:"arrival"`
+  Airline     string `json:"airline" binding:"required"`
+  Origin      string `json:"origin" binding:"required"`
+  Destination string `json:"destination" binding:"required"`
+  Departure   string `json:"departure" binding:"required"`
+  Arrival     string `json:"arrival" binding:"required"`
 }
 
 func CreateFlightSeeder() {
@@ -211,7 +211,7 @@ func CreateFlightSeeder() {
   }
 }
 
-func CreateFlightAdmin(c *gin.Context) {
+func CreateFlight(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {

@@ -16,5 +16,9 @@ func AdminRoutes(router *gin.RouterGroup) {
   adminRoute.GET("/get-user/:id", bio.GetUser)
 
   // flight routes
-  adminRoute.POST("/create-flight", flight.CreateFlightAdmin)
+  adminRoute.POST("/create-flight", flight.CreateFlight)
+  adminRoute.GET("/get-flights", flight.GetFlights)
+  adminRoute.GET("/get-flight/:id", flight.GetFlight)
+  adminRoute.PUT("/update-flight/:id", flight.UpdateFlight)
+  adminRoute.DELETE("/delete-flight/:id", flight.DeleteFlight)
 }
