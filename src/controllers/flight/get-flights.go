@@ -26,7 +26,7 @@ func GetFlights(c *gin.Context) {
 
   // count total flights
   var flightCount int64
-  if err := db.Model(&models.Flight{}).Count(&flightCount); err != nil {
+  if err := db.Model(&models.Flight{}).Count(&flightCount).Error; err != nil {
     utils.JSONResponse(c, 500, false, "failed to count flights", nil)
     return
   }

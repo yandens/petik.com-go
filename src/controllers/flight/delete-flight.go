@@ -15,7 +15,7 @@ func DeleteFlightSeeder() {
   }
 
   // delete flights
-  if err := db.Exec("DELETE FROM flights; VACUUM;").Error; err != nil {
+  if err := db.Exec("TRUNCATE TABLE flights RESTART IDENTITY;").Error; err != nil {
     panic(err)
   }
 }
@@ -32,6 +32,13 @@ func DeleteFlight(c *gin.Context) {
   id := c.Param("id")
   if id == "" {
     utils.JSONResponse(c, 400, false, "flight id is required", nil)
+    return
+  }
+
+  // check if flight exists
+  var flightExist models.Flight
+  if err := db.Where("id = ?", id).First(&flightExist).Error; err != nil {
+    utils.JSONResponse(c, 404, false, "flight not found", nil)
     return
   }
 

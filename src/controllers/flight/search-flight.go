@@ -30,7 +30,7 @@ func SearchFlight(c *gin.Context) {
 
   // get flights
   var flights []models.Flight
-  if err := db.Model(&models.Flight{}).Where("origin = ? AND destination = ? AND departure LIKE ?", input.Origin, input.Destination, input.Date+"%").Find(&flights).Error; err != nil {
+  if err := db.Model(&models.Flight{}).Where("origin = ? AND destination = ? AND DATE(departure) = ?", input.Origin, input.Destination, input.Date).Find(&flights).Error; err != nil {
     utils.JSONResponse(c, 400, false, "flight not found", nil)
     return
   }

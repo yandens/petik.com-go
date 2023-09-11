@@ -231,13 +231,13 @@ func CreateFlight(c *gin.Context) {
   arrival, _ := time.Parse(layout, input.Arrival)
 
   // validate departure and arrival time
-  if arrival.Before(departure) {
+  if arrival.Before(departure) || departure.After(arrival) {
     utils.JSONResponse(c, 400, false, "invalid departure and arrival time", nil)
     return
   }
 
   // check if flight already exist
-  isExist := db.Model(&models.Flight{}).Where("airline = ? AND origin = ? AND destination = ? AND departure = ? AND arrival = ?", input.Airline, input.Origin, input.Destination, input.Departure, input.Arrival).Take(&models.Flight{}).RowsAffected
+  isExist := db.Model(&models.Flight{}).Where("airline = ? AND origin = ? AND destination = ? AND departure = ? AND arrival = ?", input.Airline, input.Origin, input.Destination, departure, arrival).Take(&models.Flight{}).RowsAffected
   if isExist == 1 {
     utils.JSONResponse(c, 400, false, "flight already exist", nil)
     return
@@ -294,4 +294,7 @@ func CreateFlight(c *gin.Context) {
     utils.JSONResponse(c, 500, false, "failed to save flight", flight)
     return
   }
+
+  // return response
+  utils.JSONResponse(c, 200, true, "success", flight)
 }

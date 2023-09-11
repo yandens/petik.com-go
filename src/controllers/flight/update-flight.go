@@ -32,6 +32,13 @@ func UpdateFlight(c *gin.Context) {
     return
   }
 
+  // check if flight exists
+  var flightExist models.Flight
+  if err := db.Where("id = ?", id).First(&flightExist).Error; err != nil {
+    utils.JSONResponse(c, 404, false, "flight not found", nil)
+    return
+  }
+
   // get input
   var input UpdateFlightInput
   if err := c.ShouldBindJSON(&input); err != nil {
@@ -45,7 +52,7 @@ func UpdateFlight(c *gin.Context) {
   arrival, _ := time.Parse(layout, input.Arrival)
 
   // validate departure and arrival time
-  if arrival.Before(departure) {
+  if arrival.Before(departure) || departure.After(arrival) {
     utils.JSONResponse(c, 400, false, "invalid departure and arrival time", nil)
     return
   }
