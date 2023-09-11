@@ -14,7 +14,7 @@ func MigrateAll() {
 
   // migrate all models
   migrator := db.Migrator()
-  if err := migrator.AutoMigrate(&models.Role{}, &models.User{}, &models.UserBio{}); err != nil { // add more models here
+  if err := migrator.AutoMigrate(&models.Role{}, &models.User{}, &models.UserBio{}, &models.Flight{}); err != nil { // add more models here
     panic(err)
   }
 }
@@ -28,7 +28,7 @@ func RollbackAll() {
 
   // rollback all models
   migrator := db.Migrator()
-  if err := migrator.DropTable(&models.Role{}, &models.User{}, &models.UserBio{}); err != nil {
+  if err := migrator.DropTable(&models.Role{}, &models.User{}, &models.UserBio{}, &models.Flight{}); err != nil {
     panic(err)
   }
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func GetEnv(env string) string {
-  err := godotenv.Load()
+  err := godotenv.Load("../.env")
   if err != nil {
     panic("Error loading .env file")
   }

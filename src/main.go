@@ -42,5 +42,20 @@ func main() {
   // airport routes
   routes.AirportRoutes(api)
 
+  // flight routes
+  routes.FlightRoutes(api)
+
+  //// cron jobs to automate flight seeder
+  //s := gocron.NewScheduler(time.UTC)
+  //
+  //// delete seeder every 1 week at 23:59
+  //s.Every(1).Week().Weekday(time.Sunday).At("23:59").Do(flight.DeleteFlightSeeder)
+  //
+  //// update seeder every 1 week at 00:00
+  //s.Every(1).Week().Weekday(time.Monday).At("00:00").Do(flight.CreateFlightSeeder)
+  //
+  //// start cron job
+  //s.StartBlocking()
+
   router.Run(configs.GetEnv("HOST") + ":" + configs.GetEnv("PORT"))
 }
