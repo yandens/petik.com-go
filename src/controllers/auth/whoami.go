@@ -2,7 +2,7 @@ package auth
 
 import (
   "github.com/gin-gonic/gin"
-  "github.com/yandens/petik.com-go/src/utils"
+  "github.com/yandens/petik.com-go/src/helpers"
 )
 
 func WhoAmI(c *gin.Context) {
@@ -11,11 +11,11 @@ func WhoAmI(c *gin.Context) {
   role, _ := c.Get("role")
 
   if id == "" || email == "" || role == "" {
-    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
     return
   }
 
-  utils.JSONResponse(c, 200, true, "Success", gin.H{
+  helpers.JSONResponse(c, 200, true, "Success", gin.H{
     "id":    id,
     "email": email,
     "role":  role,

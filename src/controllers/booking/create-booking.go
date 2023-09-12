@@ -3,8 +3,8 @@ package booking
 import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
   "math/rand"
   "time"
 )
@@ -25,14 +25,14 @@ func CreateBooking(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "Something went wrong", nil)
+    helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
     return
   }
 
   // get user id from middleware
   id, _ := c.Get("id")
   if id == "" {
-    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
     return
   }
 
@@ -44,26 +44,26 @@ func CreateBooking(c *gin.Context) {
   case uint:
     userID = id
   default:
-    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
   }
 
   // get user input
   var input CreateBookingInput
   if err := c.ShouldBindJSON(&input); err != nil {
-    utils.JSONResponse(c, 400, false, "Invalid request", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid request", nil)
     return
   }
 
   // check if flight exist
   var flight models.Flight
   if err := db.Model(&models.Flight{}).Where("id = ?", input.FlightID).First(&flight).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "Invalid flight", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid flight", nil)
     return
   }
 
   // check if flight class exist
   if input.FlightClass != "Economy" && input.FlightClass != "Business" && input.FlightClass != "First" {
-    utils.JSONResponse(c, 400, false, "Invalid flight class", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid flight class", nil)
     return
   }
 
@@ -84,7 +84,7 @@ func CreateBooking(c *gin.Context) {
 
   // check if total passenger is equal to detail length
   if input.TotalPassenger != len(input.Detail) {
-    utils.JSONResponse(c, 400, false, "Invalid total passenger", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid total passenger", nil)
     return
   }
 
@@ -95,14 +95,14 @@ func CreateBooking(c *gin.Context) {
   }
 
   // check if seat number is unique and valid
-  if !utils.IsUniqueSeatNumber(seatNumbers) || !utils.IsSeatNumberValid(seatNumbers) {
-    utils.JSONResponse(c, 400, false, "Invalid seat number", nil)
+  if !helpers.IsUniqueSeatNumber(seatNumbers) || !helpers.IsSeatNumberValid(seatNumbers) {
+    helpers.JSONResponse(c, 400, false, "Invalid seat number", nil)
     return
   }
 
   // check if seat number is available
-  if !utils.IsSeatNumberAvailable(seatNumbers, flight.ID, db) {
-    utils.JSONResponse(c, 400, false, "Seat number is reserved", nil)
+  if !helpers.IsSeatNumberAvailable(seatNumbers, flight.ID, db) {
+    helpers.JSONResponse(c, 400, false, "Seat number is reserved", nil)
     return
   }
 
@@ -117,7 +117,7 @@ func CreateBooking(c *gin.Context) {
   }
 
   if err := db.Create(&booking).Error; err != nil {
-    utils.JSONResponse(c, 500, false, "Something went wrong", nil)
+    helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
     return
   }
 
@@ -132,10 +132,10 @@ func CreateBooking(c *gin.Context) {
     }
 
     if err := db.Create(&bookingDetail).Error; err != nil {
-      utils.JSONResponse(c, 500, false, "Something went wrong", nil)
+      helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
       return
     }
   }
 
-  utils.JSONResponse(c, 200, true, "Success create booking", booking)
+  helpers.JSONResponse(c, 200, true, "Success create booking", booking)
 }

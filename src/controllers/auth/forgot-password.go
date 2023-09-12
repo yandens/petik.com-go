@@ -3,8 +3,8 @@ package auth
 import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
 )
 
 type ForgotPasswordInput struct {
@@ -17,26 +17,26 @@ func ForgotPassword(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+    helpers.JSONResponse(c, 500, false, "Could not connect to the database", nil)
     return
   }
 
   // get email from request body
   if err := c.ShouldBindJSON(&input); err != nil {
-    utils.JSONResponse(c, 400, false, "Invalid request", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid request", nil)
     return
   }
 
   // find user by email
   var user models.User
   if err := db.Joins("Role").Model(&models.User{}).Where("email = ?", input.Email).First(&user).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "Email not found", nil)
+    helpers.JSONResponse(c, 400, false, "Email not found", nil)
     return
   }
 
   // send email
-  utils.SendEmail(user, "reset-password", "Reset Password")
+  helpers.SendEmail(user, "reset-password", "Reset Password")
 
   // return response
-  utils.JSONResponse(c, 200, true, "Success", nil)
+  helpers.JSONResponse(c, 200, true, "Success", nil)
 }

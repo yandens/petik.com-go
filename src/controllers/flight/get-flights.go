@@ -3,8 +3,8 @@ package flight
 import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
   "math"
   "strconv"
 )
@@ -13,7 +13,7 @@ func GetFlights(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "failed to connect to database", nil)
+    helpers.JSONResponse(c, 500, false, "failed to connect to database", nil)
     return
   }
 
@@ -27,7 +27,7 @@ func GetFlights(c *gin.Context) {
   // count total flights
   var flightCount int64
   if err := db.Model(&models.Flight{}).Count(&flightCount).Error; err != nil {
-    utils.JSONResponse(c, 500, false, "failed to count flights", nil)
+    helpers.JSONResponse(c, 500, false, "failed to count flights", nil)
     return
   }
 
@@ -37,17 +37,17 @@ func GetFlights(c *gin.Context) {
   // get flights
   var flights []models.Flight
   if err := db.Model(&models.Flight{}).Limit(limit).Offset(offset).Find(&flights).Error; err != nil {
-    utils.JSONResponse(c, 500, false, "failed to get flights", nil)
+    helpers.JSONResponse(c, 500, false, "failed to get flights", nil)
     return
   }
 
   // check if flights is empty
   if len(flights) == 0 {
-    utils.JSONResponse(c, 404, false, "flights not found", nil)
+    helpers.JSONResponse(c, 404, false, "flights not found", nil)
     return
   }
 
-  utils.JSONResponse(c, 200, true, "flights retrieved successfully", gin.H{
+  helpers.JSONResponse(c, 200, true, "flights retrieved successfully", gin.H{
     "flights":      flights,
     "totalPages":   totalPages,
     "currentPage":  page,

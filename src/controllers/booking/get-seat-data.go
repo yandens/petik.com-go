@@ -3,36 +3,36 @@ package booking
 import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
 )
 
 func GetSeatData(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "Something went wrong", nil)
+    helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
     return
   }
 
   // get user id from middleware
   id, _ := c.Get("id")
   if id == "" {
-    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
     return
   }
 
   // get flight id from params
   flightID := c.Param("flightID")
   if flightID == "" {
-    utils.JSONResponse(c, 400, false, "Flight ID is required", nil)
+    helpers.JSONResponse(c, 400, false, "Flight ID is required", nil)
     return
   }
 
   // check if flight exist
   var flight models.Flight
   if err := db.Model(&models.Flight{}).Where("id = ?", flightID).First(&flight).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "Invalid flight", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid flight", nil)
     return
   }
 
@@ -42,10 +42,10 @@ func GetSeatData(c *gin.Context) {
 
   // check if seat data is empty
   if len(seatData) == 0 {
-    utils.JSONResponse(c, 200, true, "No reserved seats", nil)
+    helpers.JSONResponse(c, 200, true, "No reserved seats", nil)
     return
   }
 
   // return seat data
-  utils.JSONResponse(c, 200, true, "Success", seatData)
+  helpers.JSONResponse(c, 200, true, "Success", seatData)
 }
