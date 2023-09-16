@@ -21,5 +21,10 @@ func GetUsers(c *gin.Context) {
     return
   }
 
+  if len(users) == 0 {
+    helpers.JSONResponse(c, 204, false, "Users data is empty", nil)
+    return
+  }
+
   helpers.JSONResponse(c, 200, true, "Users retrieved successfully", users)
 }

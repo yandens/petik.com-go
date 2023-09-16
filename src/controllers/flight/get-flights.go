@@ -43,7 +43,7 @@ func GetFlights(c *gin.Context) {
 
   // check if flights is empty
   if len(flights) == 0 {
-    helpers.JSONResponse(c, 404, false, "flights not found", nil)
+    helpers.JSONResponse(c, 204, true, "flights data is empty", nil)
     return
   }
 
