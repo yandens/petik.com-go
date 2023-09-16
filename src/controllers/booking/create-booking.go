@@ -50,7 +50,7 @@ func CreateBooking(c *gin.Context) {
   // get user input
   var input CreateBookingInput
   if err := c.ShouldBindJSON(&input); err != nil {
-    helpers.JSONResponse(c, 400, false, "Invalid request", nil)
+    helpers.JSONResponse(c, 400, false, err.Error(), nil)
     return
   }
 
@@ -113,7 +113,7 @@ func CreateBooking(c *gin.Context) {
     FlightClass:    input.FlightClass,
     TotalPassenger: input.TotalPassenger,
     TotalPrice:     float64(totalPrice),
-    Status:         "Pending",
+    Status:         "pending",
   }
 
   if err := db.Create(&booking).Error; err != nil {
@@ -137,5 +137,14 @@ func CreateBooking(c *gin.Context) {
     }
   }
 
-  helpers.JSONResponse(c, 200, true, "Success create booking", booking)
+  helpers.JSONResponse(c, 200, true, "Success create booking", gin.H{
+    "bookingId":      booking.ID,
+    "userId":         booking.UserID,
+    "flightId":       booking.FlightID,
+    "flightClass":    booking.FlightClass,
+    "totalPassenger": booking.TotalPassenger,
+    "totalPrice":     booking.TotalPrice,
+    "status":         booking.Status,
+    "detail":         input.Detail,
+  })
 }

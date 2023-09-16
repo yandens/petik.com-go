@@ -42,7 +42,7 @@ func GetSeatData(c *gin.Context) {
 
   // check if seat data is empty
   if len(seatData) == 0 {
-    helpers.JSONResponse(c, 200, true, "No reserved seats", nil)
+    helpers.JSONResponse(c, 204, true, "No reserved seats", nil)
     return
   }
 
