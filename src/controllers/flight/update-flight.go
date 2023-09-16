@@ -4,8 +4,8 @@ import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
   "github.com/yandens/petik.com-go/src/controllers/airport"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
   "time"
 )
 
@@ -21,28 +21,28 @@ func UpdateFlight(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "failed to connect to database", nil)
+    helpers.JSONResponse(c, 500, false, "failed to connect to database", nil)
     return
   }
 
   // get id from params
   id := c.Param("id")
   if id == "" {
-    utils.JSONResponse(c, 400, false, "flight id is required", nil)
+    helpers.JSONResponse(c, 400, false, "flight id is required", nil)
     return
   }
 
   // check if flight exists
   var flightExist models.Flight
   if err := db.Where("id = ?", id).First(&flightExist).Error; err != nil {
-    utils.JSONResponse(c, 404, false, "flight not found", nil)
+    helpers.JSONResponse(c, 404, false, "flight not found", nil)
     return
   }
 
   // get input
   var input UpdateFlightInput
   if err := c.ShouldBindJSON(&input); err != nil {
-    utils.JSONResponse(c, 400, false, "invalid input", nil)
+    helpers.JSONResponse(c, 400, false, "invalid input", nil)
     return
   }
 
@@ -53,7 +53,7 @@ func UpdateFlight(c *gin.Context) {
 
   // validate departure and arrival time
   if arrival.Before(departure) || departure.After(arrival) {
-    utils.JSONResponse(c, 400, false, "invalid departure and arrival time", nil)
+    helpers.JSONResponse(c, 400, false, "invalid departure and arrival time", nil)
     return
   }
 
@@ -81,14 +81,14 @@ func UpdateFlight(c *gin.Context) {
   // get origin city
   origin, err := airport.GetAirportByIATA(input.Origin)
   if err != nil {
-    utils.JSONResponse(c, 400, false, "invalid input", nil)
+    helpers.JSONResponse(c, 400, false, "invalid input", nil)
     return
   }
 
   // get destination city
   destination, err := airport.GetAirportByIATA(input.Destination)
   if err != nil {
-    utils.JSONResponse(c, 400, false, "invalid input", nil)
+    helpers.JSONResponse(c, 400, false, "invalid input", nil)
     return
   }
 
@@ -104,10 +104,10 @@ func UpdateFlight(c *gin.Context) {
     Arrival:         arrival,
   }
   if err := db.Model(&models.Flight{}).Where("id = ?", id).Updates(flight).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "failed to update flight", nil)
+    helpers.JSONResponse(c, 400, false, "failed to update flight", nil)
     return
   }
 
   // return response
-  utils.JSONResponse(c, 200, true, "flight updated successfully", nil)
+  helpers.JSONResponse(c, 200, true, "flight updated successfully", nil)
 }

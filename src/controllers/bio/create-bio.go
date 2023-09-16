@@ -3,8 +3,8 @@ package bio
 import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
 )
 
 type CreateBioInput struct {
@@ -20,7 +20,7 @@ func CreateBio(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+    helpers.JSONResponse(c, 500, false, "Could not connect to the database", nil)
     return
   }
 
@@ -31,7 +31,7 @@ func CreateBio(c *gin.Context) {
   email, _ := c.Get("email")
 
   if id == "" || email == "" {
-    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
     return
   }
 
@@ -43,20 +43,20 @@ func CreateBio(c *gin.Context) {
   case uint:
     userID = id
   default:
-    utils.JSONResponse(c, 401, false, "Unauthorized", nil)
+    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
   }
 
   // check if user bio already exists
   isExist := db.Model(&models.UserBio{}).Where("user_id = ?", userID).Take(&models.UserBio{}).RowsAffected
   if isExist == 1 {
-    utils.JSONResponse(c, 400, false, "User bio already exists", nil)
+    helpers.JSONResponse(c, 400, false, "User bio already exists", nil)
     return
   }
 
   // get user input
   var input CreateBioInput
   if err := c.ShouldBindJSON(&input); err != nil {
-    utils.JSONResponse(c, 400, false, "Input must be JSON", nil)
+    helpers.JSONResponse(c, 400, false, "Input must be JSON", nil)
     return
   }
 
@@ -74,11 +74,11 @@ func CreateBio(c *gin.Context) {
 
   // save user bio
   if err := db.Create(&userBio).Error; err != nil {
-    utils.JSONResponse(c, 500, false, "Could not create user bio", nil)
+    helpers.JSONResponse(c, 500, false, "Could not create user bio", nil)
     return
   }
 
-  utils.JSONResponse(c, 200, true, "User bio created successfully", gin.H{
+  helpers.JSONResponse(c, 200, true, "User bio created successfully", gin.H{
     "bio_id":      userBio.ID, // id from bio table
     "user_id":     userID,
     "email":       email,

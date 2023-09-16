@@ -6,8 +6,8 @@ import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
   "github.com/yandens/petik.com-go/src/controllers/airport"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
   "io/ioutil"
   "net/http"
   "time"
@@ -190,7 +190,7 @@ func CreateFlightSeeder() {
     }
 
     // get departure and arrival time
-    departureTime, arrivalTime := utils.SetTime()
+    departureTime, arrivalTime := helpers.SetTime()
 
     // save to database
     flight := models.Flight{
@@ -215,13 +215,13 @@ func CreateFlight(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "failed to connect to database", nil)
+    helpers.JSONResponse(c, 500, false, "failed to connect to database", nil)
   }
 
   // get input
   var input FlightInput
   if err := c.ShouldBindJSON(&input); err != nil {
-    utils.JSONResponse(c, 400, false, "invalid input", nil)
+    helpers.JSONResponse(c, 400, false, "invalid input", nil)
     return
   }
 
@@ -232,14 +232,14 @@ func CreateFlight(c *gin.Context) {
 
   // validate departure and arrival time
   if arrival.Before(departure) || departure.After(arrival) {
-    utils.JSONResponse(c, 400, false, "invalid departure and arrival time", nil)
+    helpers.JSONResponse(c, 400, false, "invalid departure and arrival time", nil)
     return
   }
 
   // check if flight already exist
   isExist := db.Model(&models.Flight{}).Where("airline = ? AND origin = ? AND destination = ? AND departure = ? AND arrival = ?", input.Airline, input.Origin, input.Destination, departure, arrival).Take(&models.Flight{}).RowsAffected
   if isExist == 1 {
-    utils.JSONResponse(c, 400, false, "flight already exist", nil)
+    helpers.JSONResponse(c, 400, false, "flight already exist", nil)
     return
   }
 
@@ -267,14 +267,14 @@ func CreateFlight(c *gin.Context) {
   // get origin city
   origin, err := airport.GetAirportByIATA(input.Origin)
   if err != nil {
-    utils.JSONResponse(c, 400, false, "invalid input", nil)
+    helpers.JSONResponse(c, 400, false, "invalid input", nil)
     return
   }
 
   // get destination city
   destination, err := airport.GetAirportByIATA(input.Destination)
   if err != nil {
-    utils.JSONResponse(c, 400, false, "invalid input", nil)
+    helpers.JSONResponse(c, 400, false, "invalid input", nil)
     return
   }
 
@@ -291,10 +291,10 @@ func CreateFlight(c *gin.Context) {
   }
   err = db.Create(&flight).Error
   if err != nil {
-    utils.JSONResponse(c, 500, false, "failed to save flight", flight)
+    helpers.JSONResponse(c, 500, false, "failed to save flight", flight)
     return
   }
 
   // return response
-  utils.JSONResponse(c, 200, true, "success", flight)
+  helpers.JSONResponse(c, 200, true, "success", flight)
 }

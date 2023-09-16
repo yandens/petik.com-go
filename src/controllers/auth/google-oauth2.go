@@ -4,8 +4,8 @@ import (
   "fmt"
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
-  "github.com/yandens/petik.com-go/src/utils"
   "golang.org/x/oauth2"
   oauthapi "google.golang.org/api/oauth2/v2"
 )
@@ -39,21 +39,21 @@ func GoogleOauth2Callback(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
-    utils.JSONResponse(c, 500, false, "Could not connect to the database", nil)
+    helpers.JSONResponse(c, 500, false, "Could not connect to the database", nil)
     return
   }
 
   // get code from query string
   code := c.Query("code")
   if code == "" {
-    utils.JSONResponse(c, 400, false, "Code is required", nil)
+    helpers.JSONResponse(c, 400, false, "Code is required", nil)
     return
   }
 
   // exchange code to token
   token, err := googleOauth2Config.Exchange(c, code)
   if err != nil {
-    utils.JSONResponse(c, 400, false, "Invalid code", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid code", nil)
     return
   }
 
@@ -61,14 +61,14 @@ func GoogleOauth2Callback(c *gin.Context) {
   oauth2Service, _ := oauthapi.New(googleOauth2Config.Client(c, token))
   userInfo, err := oauth2Service.Userinfo.Get().Do()
   if err != nil {
-    utils.JSONResponse(c, 400, false, "Invalid token", nil)
+    helpers.JSONResponse(c, 400, false, "Invalid token", nil)
     return
   }
 
   // get role
   var role models.Role
   if err := db.Model(&models.Role{}).Where("role = ?", "user").First(&role).Error; err != nil {
-    utils.JSONResponse(c, 400, false, "Role not found", nil)
+    helpers.JSONResponse(c, 400, false, "Role not found", nil)
     return
   }
 
@@ -76,7 +76,7 @@ func GoogleOauth2Callback(c *gin.Context) {
   var user models.User
   if err := db.Model(&models.User{}).Where("email = ?", userInfo.Email).First(&user).Error; err == nil {
     fmt.Println(err)
-    utils.JSONResponse(c, 400, false, "Email already registered", nil)
+    helpers.JSONResponse(c, 400, false, "Email already registered", nil)
     return
   }
 
@@ -89,15 +89,15 @@ func GoogleOauth2Callback(c *gin.Context) {
     IsVerified:  true,
   }
   if err := db.Create(&newUser).Error; err != nil {
-    utils.JSONResponse(c, 500, false, "Could not create user", nil)
+    helpers.JSONResponse(c, 500, false, "Could not create user", nil)
     return
   }
 
   // generate token
-  authToken, err := utils.GenerateToken(newUser.ID, newUser.Email, role.Role)
+  authToken, err := helpers.GenerateToken(newUser.ID, newUser.Email, role.Role)
 
   // return response
-  utils.JSONResponse(c, 200, true, "Success", gin.H{
+  helpers.JSONResponse(c, 200, true, "Success", gin.H{
     "email": newUser.Email,
     "token": authToken,
   })

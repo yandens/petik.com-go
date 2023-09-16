@@ -15,4 +15,5 @@ type Flight struct {
   DestinationCity string    `gorm:"not null"`
   Departure       time.Time `gorm:"not null"`
   Arrival         time.Time `gorm:"not null"`
+  Booking         []Booking `gorm:"foreignKey:FlightID"`
 }

@@ -4,7 +4,7 @@ import (
   "encoding/json"
   "fmt"
   "github.com/gin-gonic/gin"
-  "github.com/yandens/petik.com-go/src/utils"
+  "github.com/yandens/petik.com-go/src/helpers"
   "io/ioutil"
   "net/http"
 )
@@ -61,7 +61,7 @@ func GetAirportBySearch(c *gin.Context) {
   // get params
   search := c.Param("search")
   if search == "" {
-    utils.JSONResponse(c, 400, false, "Search is required", nil)
+    helpers.JSONResponse(c, 400, false, "Search is required", nil)
   }
 
   // define url
@@ -70,7 +70,7 @@ func GetAirportBySearch(c *gin.Context) {
   // call third party api to get airport
   resp, err := http.Get(url)
   if err != nil {
-    utils.JSONResponse(c, 400, false, "Failed to get airport", nil)
+    helpers.JSONResponse(c, 400, false, "Failed to get airport", nil)
     return
   }
   defer resp.Body.Close()
@@ -78,19 +78,19 @@ func GetAirportBySearch(c *gin.Context) {
   // read response
   respData, err := ioutil.ReadAll(resp.Body)
   if err != nil {
-    utils.JSONResponse(c, 400, false, "Failed to get airport", nil)
+    helpers.JSONResponse(c, 400, false, "Failed to get airport", nil)
     return
   }
 
   // parse response to readable json
   var data APIResponse
   if err := json.Unmarshal(respData, &data); err != nil {
-    utils.JSONResponse(c, 400, false, "Failed to get airport", nil)
+    helpers.JSONResponse(c, 400, false, "Failed to get airport", nil)
     return
   }
 
   // return response
-  utils.JSONResponse(c, 200, true, "Airport retrieved successfully", data)
+  helpers.JSONResponse(c, 200, true, "Airport retrieved successfully", data)
 }
 
 func GetAirportByIATA(IATA string) (map[string]string, error) {
