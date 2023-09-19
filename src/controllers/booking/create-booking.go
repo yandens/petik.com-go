@@ -137,6 +137,20 @@ func CreateBooking(c *gin.Context) {
     }
   }
 
+  // create notification
+  notification := models.Notification{
+    UserID:  userID,
+    Title:   "Booking",
+    Message: "Your booking has been created",
+    IsRead:  false,
+  }
+
+  // save notification to database
+  if err := db.Create(&notification).Error; err != nil {
+    helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
+    return
+  }
+
   helpers.JSONResponse(c, 200, true, "Success create booking", gin.H{
     "bookingId":      booking.ID,
     "userId":         booking.UserID,

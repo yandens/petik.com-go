@@ -4,6 +4,7 @@ import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/controllers/bio"
   "github.com/yandens/petik.com-go/src/controllers/booking"
+  "github.com/yandens/petik.com-go/src/controllers/notification"
   "github.com/yandens/petik.com-go/src/controllers/payment"
   "github.com/yandens/petik.com-go/src/middlewares"
 )
@@ -25,4 +26,7 @@ func UserRoutes(router *gin.RouterGroup) {
 
   // payment routes
   userRoute.POST("/create-payment", payment.CreatePayment)
+
+  // notification routes
+  userRoute.GET("/get-notifications", notification.GetNotifications)
 }

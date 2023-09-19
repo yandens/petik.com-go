@@ -79,6 +79,20 @@ func CreatePayment(c *gin.Context) {
     return
   }
 
+  // create notification
+  notification := models.Notification{
+    UserID:  booking.UserID,
+    Title:   "Payment created",
+    Message: "Your payment has been created",
+    IsRead:  false,
+  }
+
+  // save notification to database
+  if err := db.Create(&notification).Error; err != nil {
+    helpers.JSONResponse(c, 500, false, "Failed to create notification", nil)
+    return
+  }
+
   // return response
   helpers.JSONResponse(c, 200, true, "Payment created successfully", gin.H{
     "paymentId":  payment.ID,

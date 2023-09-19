@@ -52,5 +52,18 @@ func CancelBooking(c *gin.Context) {
     return
   }
 
+  // create notification
+  notification := models.Notification{
+    UserID:  booking.UserID,
+    Title:   "Booking canceled",
+    Message: "Your booking has been canceled",
+  }
+
+  // save notification to database
+  if err := db.Create(&notification).Error; err != nil {
+    helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
+    return
+  }
+
   helpers.JSONResponse(c, 200, true, "Booking canceled", nil)
 }
