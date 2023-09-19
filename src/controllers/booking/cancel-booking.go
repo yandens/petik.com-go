@@ -26,17 +26,6 @@ func CancelBooking(c *gin.Context) {
     return
   }
 
-  // type assertion convert interface{} to uint
-  var userID uint
-  switch id := id.(type) {
-  case float64:
-    userID = uint(id)
-  case uint:
-    userID = id
-  default:
-    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
-  }
-
   // get user input
   var input CancelBookingInput
   if err := c.ShouldBindJSON(&input); err != nil {
@@ -46,19 +35,13 @@ func CancelBooking(c *gin.Context) {
 
   // check if booking exist
   var booking models.Booking
-  if err := db.Model(&models.Booking{}).Where("id = ?", input.BookingID).First(&booking).Error; err != nil {
+  if err := db.Model(&models.Booking{}).Where("id = ? AND user_id = ?", input.BookingID, id).First(&booking).Error; err != nil {
     helpers.JSONResponse(c, 400, false, "Invalid booking", nil)
     return
   }
 
-  // check if booking belong to user
-  if booking.UserID != userID {
-    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
-    return
-  }
-
   // check if booking status is pending to be canceled
-  if booking.Status == "paid" {
+  if booking.Status != "pending" {
     helpers.JSONResponse(c, 400, false, "Invalid booking status", nil)
     return
   }

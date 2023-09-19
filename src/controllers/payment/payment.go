@@ -28,17 +28,6 @@ func CreatePayment(c *gin.Context) {
     return
   }
 
-  // type assertion convert interface{} to uint
-  var userID uint
-  switch id := id.(type) {
-  case float64:
-    userID = uint(id)
-  case uint:
-    userID = id
-  default:
-    helpers.JSONResponse(c, 401, false, "Unauthorized", nil)
-  }
-
   // get input from user
   var input PaymentInput
   if err := c.ShouldBindJSON(&input); err != nil {
@@ -48,13 +37,13 @@ func CreatePayment(c *gin.Context) {
 
   // check if booking exists
   var booking models.Booking
-  if err := db.Where("id = ? AND user_id = ?", input.BookingID, userID).First(&booking).Error; err != nil {
+  if err := db.Model(&models.Booking{}).Where("id = ? AND user_id = ?", input.BookingID, id).First(&booking).Error; err != nil {
     helpers.JSONResponse(c, 404, false, "Booking not found", nil)
     return
   }
 
   // check if booking status is pending
-  if booking.Status != "Pending" {
+  if booking.Status != "pending" {
     helpers.JSONResponse(c, 400, false, "Booking status is not pending", nil)
     return
   }
@@ -91,5 +80,11 @@ func CreatePayment(c *gin.Context) {
   }
 
   // return response
-  helpers.JSONResponse(c, 200, true, "Payment created successfully", payment)
+  helpers.JSONResponse(c, 200, true, "Payment created successfully", gin.H{
+    "paymentId":  payment.ID,
+    "bookingId":  payment.BookingID,
+    "method":     payment.PaymentMethod,
+    "totalPrice": payment.TotalPrice,
+    "date":       payment.CreatedAt,
+  })
 }

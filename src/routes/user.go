@@ -21,7 +21,7 @@ func UserRoutes(router *gin.RouterGroup) {
   // booking routes
   userRoute.POST("/create-booking", booking.CreateBooking)
   userRoute.PUT("/cancel-booking", booking.CancelBooking)
-  userRoute.GET("/my-booking", booking.GetUserBookings)
+  userRoute.GET("/my-booking", booking.GetBookings)
 
   // payment routes
   userRoute.POST("/create-payment", payment.CreatePayment)
