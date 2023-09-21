@@ -55,7 +55,7 @@ func CancelBooking(c *gin.Context) {
   // create notification
   notification := models.Notification{
     UserID:  booking.UserID,
-    Title:   "Booking canceled",
+    Title:   "Booking Canceled",
     Message: "Your booking has been canceled",
   }
 

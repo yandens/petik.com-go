@@ -82,7 +82,7 @@ func CreatePayment(c *gin.Context) {
   // create notification
   notification := models.Notification{
     UserID:  booking.UserID,
-    Title:   "Payment created",
+    Title:   "Payment",
     Message: "Your payment has been created",
     IsRead:  false,
   }
@@ -99,6 +99,6 @@ func CreatePayment(c *gin.Context) {
     "bookingId":  payment.BookingID,
     "method":     payment.PaymentMethod,
     "totalPrice": payment.TotalPrice,
-    "date":       payment.CreatedAt,
+    "date":       payment.CreatedAt.Format("2006-01-02 15:04:05"),
   })
 }
