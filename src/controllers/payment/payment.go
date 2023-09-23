@@ -35,6 +35,13 @@ func CreatePayment(c *gin.Context) {
     return
   }
 
+  // get user bio data
+  var userBio models.UserBio
+  if err := db.Joins("User").Model(&models.UserBio{}).Where("user_id = ?", id).First(&userBio).Error; err != nil {
+    helpers.JSONResponse(c, 500, false, "Failed to get user data", nil)
+    return
+  }
+
   // check if booking exists
   var booking models.Booking
   if err := db.Model(&models.Booking{}).Where("id = ? AND user_id = ?", input.BookingID, id).First(&booking).Error; err != nil {
@@ -92,6 +99,9 @@ func CreatePayment(c *gin.Context) {
     helpers.JSONResponse(c, 500, false, "Failed to create notification", nil)
     return
   }
+
+  // send notification to user
+  helpers.SendEmailPaymentConfirmation(userBio, payment, "Payment Confirmation")
 
   // return response
   helpers.JSONResponse(c, 200, true, "Payment created successfully", gin.H{

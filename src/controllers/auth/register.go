@@ -73,7 +73,7 @@ func Register(c *gin.Context) {
   }
 
   // send verify email
-  helpers.SendEmail(user, "verify-email", "Verify Email")
+  helpers.SendEmailAuth(user, "verify-email", "Verify Email")
 
   // return response
   helpers.JSONResponse(c, 200, true, "Success", nil)
