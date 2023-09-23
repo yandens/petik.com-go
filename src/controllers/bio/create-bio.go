@@ -79,8 +79,8 @@ func CreateBio(c *gin.Context) {
   }
 
   helpers.JSONResponse(c, 200, true, "User bio created successfully", gin.H{
-    "bio_id":      userBio.ID, // id from bio table
-    "user_id":     userID,
+    "bioId":       userBio.ID, // id from bio table
+    "userId":      userID,
     "email":       email,
     "firstName":   userBio.FirstName,
     "lastName":    userBio.LastName,

@@ -1,8 +1,10 @@
 package main
 
 import (
+  "fmt"
   "github.com/gin-contrib/cors"
   "github.com/gin-gonic/gin"
+  socketio "github.com/googollee/go-socket.io"
   "github.com/yandens/petik.com-go/src/configs"
   "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/routes"
@@ -56,6 +58,39 @@ func main() {
   //
   //// start cron job
   //s.StartBlocking()
+
+  // socket io
+  server := socketio.NewServer(nil)
+
+  // connect to socket io
+  server.OnConnect("/", func(s socketio.Conn) error {
+    s.SetContext("")
+    fmt.Println("connected:", s.ID())
+    return nil
+  })
+
+  // load notifications event
+  server.OnEvent("/", "load-notifications", func(s socketio.Conn, userID int) {
+    // get notifications
+    notifications := helpers.LoadNotifications(userID)
+
+    // emit notification
+    eventName := fmt.Sprintf("notification:%d", userID)
+    s.Emit(eventName, notifications)
+  })
+
+  // read notifications event
+  server.OnEvent("/", "read-notifications", func(s socketio.Conn, userID int) {
+    // update notifications
+    helpers.UpdateNotifications(userID)
+
+    // get notifications
+    notifications := helpers.LoadNotifications(userID)
+
+    // emit notification
+    eventName := fmt.Sprintf("notification:%d", userID)
+    s.Emit(eventName, notifications)
+  })
 
   router.Run(configs.GetEnv("HOST") + ":" + configs.GetEnv("PORT"))
 }

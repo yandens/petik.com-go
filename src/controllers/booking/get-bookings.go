@@ -7,7 +7,18 @@ import (
   "github.com/yandens/petik.com-go/src/models"
 )
 
-func GetUserBookings(c *gin.Context) {
+type BookingResponse struct {
+  ID             uint    `json:"id"`
+  UserID         uint    `json:"user_id"`
+  FlightID       uint    `json:"flight_id"`
+  FlightClass    string  `json:"flight_class"`
+  TotalPassenger int     `json:"total_passenger"`
+  TotalPrice     float64 `json:"total_price"`
+  Status         string  `json:"status"`
+  Date           string  `json:"date"`
+}
+
+func GetBookings(c *gin.Context) {
   // connect to database
   db, err := configs.ConnectToDB()
   if err != nil {
@@ -29,7 +40,22 @@ func GetUserBookings(c *gin.Context) {
     return
   }
 
-  helpers.JSONResponse(c, 200, true, "Success", bookings)
+  // convert bookings to response
+  var response []BookingResponse
+  for _, booking := range bookings {
+    response = append(response, BookingResponse{
+      ID:             booking.ID,
+      UserID:         booking.UserID,
+      FlightID:       booking.FlightID,
+      FlightClass:    booking.FlightClass,
+      TotalPassenger: booking.TotalPassenger,
+      TotalPrice:     booking.TotalPrice,
+      Status:         booking.Status,
+      Date:           booking.CreatedAt.Format("2006-01-02 15:04:05"),
+    })
+  }
+
+  helpers.JSONResponse(c, 200, true, "Success", response)
 }
 
 func GetTotalBooking(c *gin.Context) {

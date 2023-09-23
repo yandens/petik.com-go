@@ -35,5 +35,10 @@ func SearchFlight(c *gin.Context) {
     return
   }
 
+  if len(flights) == 0 {
+    helpers.JSONResponse(c, 404, false, "flight not found", nil)
+    return
+  }
+
   helpers.JSONResponse(c, 200, true, "flight retrieved successfully", flights)
 }

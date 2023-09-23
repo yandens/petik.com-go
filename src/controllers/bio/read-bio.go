@@ -30,8 +30,8 @@ func ReadBio(c *gin.Context) {
   }
 
   helpers.JSONResponse(c, 200, true, "User bio retrieved successfully", gin.H{
-    "bio_id":      userBio.ID,
-    "user_id":     userBio.User.ID,
+    "bioId":       userBio.ID,
+    "userId":      userBio.User.ID,
     "email":       userBio.User.Email,
     "firstName":   userBio.FirstName,
     "lastName":    userBio.LastName,

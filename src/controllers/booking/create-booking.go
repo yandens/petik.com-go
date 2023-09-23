@@ -54,6 +54,13 @@ func CreateBooking(c *gin.Context) {
     return
   }
 
+  // get user bio for email notification
+  var userBio models.UserBio
+  if err := db.Joins("User").Model(&models.UserBio{}).Where("user_id = ?", userID).First(&userBio).Error; err != nil {
+    helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
+    return
+  }
+
   // check if flight exist
   var flight models.Flight
   if err := db.Model(&models.Flight{}).Where("id = ?", input.FlightID).First(&flight).Error; err != nil {
@@ -136,6 +143,23 @@ func CreateBooking(c *gin.Context) {
       return
     }
   }
+
+  // create notification
+  notification := models.Notification{
+    UserID:  userID,
+    Title:   "Booking",
+    Message: "Your booking has been created",
+    IsRead:  false,
+  }
+
+  // save notification to database
+  if err := db.Create(&notification).Error; err != nil {
+    helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
+    return
+  }
+
+  // send email notification
+  helpers.SendEmailBookingConfirmation(userBio, flight, booking, "Booking Confirmation")
 
   helpers.JSONResponse(c, 200, true, "Success create booking", gin.H{
     "bookingId":      booking.ID,
