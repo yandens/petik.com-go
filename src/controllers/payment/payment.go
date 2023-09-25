@@ -3,6 +3,7 @@ package payment
 import (
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/controllers/ticket"
   "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
 )
@@ -44,7 +45,7 @@ func CreatePayment(c *gin.Context) {
 
   // check if booking exists
   var booking models.Booking
-  if err := db.Model(&models.Booking{}).Where("id = ? AND user_id = ?", input.BookingID, id).First(&booking).Error; err != nil {
+  if err := db.Joins("Flight").Joins("BookingDetail").Model(&models.Booking{}).Where("id = ? AND user_id = ?", input.BookingID, id).First(&booking).Error; err != nil {
     helpers.JSONResponse(c, 404, false, "Booking not found", nil)
     return
   }
@@ -83,6 +84,12 @@ func CreatePayment(c *gin.Context) {
   // update booking status
   if err := db.Model(&models.Booking{}).Where("id = ?", input.BookingID).Update("status", "paid").Error; err != nil {
     helpers.JSONResponse(c, 500, false, "Failed to update booking status", nil)
+    return
+  }
+
+  // create ticket
+  if err := ticket.CreateTicket(c, db, booking); err != nil {
+    helpers.JSONResponse(c, 500, false, "Failed to create ticket", nil)
     return
   }
 
