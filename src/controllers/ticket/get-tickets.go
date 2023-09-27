@@ -25,7 +25,7 @@ func GetTicket(c *gin.Context) {
 
   // get booking
   var booking models.Booking
-  if err := db.Joins("Flight").Joins("BookingDetail").Model(&models.Booking{}).Where("user_id = ? AND status = paid", id).First(&booking).Error; err != nil {
+  if err := db.Preload("Flight").Preload("BookingDetail").Model(&models.Booking{}).Where("user_id = ? AND status = paid", id).First(&booking).Error; err != nil {
     helpers.JSONResponse(c, 404, false, "Booking not found", nil)
     return
   }

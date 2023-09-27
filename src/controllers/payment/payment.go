@@ -38,15 +38,15 @@ func CreatePayment(c *gin.Context) {
 
   // get user bio data
   var userBio models.UserBio
-  if err := db.Joins("User").Model(&models.UserBio{}).Where("user_id = ?", id).First(&userBio).Error; err != nil {
+  if err := db.Preload("User").Model(&models.UserBio{}).Where("user_id = ?", id).First(&userBio).Error; err != nil {
     helpers.JSONResponse(c, 500, false, "Failed to get user data", nil)
     return
   }
 
   // check if booking exists
   var booking models.Booking
-  if err := db.Joins("Flight").Joins("BookingDetail").Model(&models.Booking{}).Where("id = ? AND user_id = ?", input.BookingID, id).First(&booking).Error; err != nil {
-    helpers.JSONResponse(c, 404, false, "Booking not found", nil)
+  if err := db.Preload("Flight").Preload("BookingDetail").Model(&models.Booking{}).Where("bookings.id = ? AND user_id = ?", input.BookingID, id).First(&booking).Error; err != nil {
+    helpers.JSONResponse(c, 404, false, err.Error(), nil)
     return
   }
 

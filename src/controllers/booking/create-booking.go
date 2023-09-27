@@ -56,7 +56,7 @@ func CreateBooking(c *gin.Context) {
 
   // get user bio for email notification
   var userBio models.UserBio
-  if err := db.Joins("User").Model(&models.UserBio{}).Where("user_id = ?", userID).First(&userBio).Error; err != nil {
+  if err := db.Preload("User").Model(&models.UserBio{}).Where("user_id = ?", userID).First(&userBio).Error; err != nil {
     helpers.JSONResponse(c, 500, false, "Something went wrong", nil)
     return
   }

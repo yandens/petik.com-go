@@ -29,7 +29,7 @@ func ForgotPassword(c *gin.Context) {
 
   // find user by email
   var user models.User
-  if err := db.Joins("Role").Model(&models.User{}).Where("email = ?", input.Email).First(&user).Error; err != nil {
+  if err := db.Preload("Role").Model(&models.User{}).Where("email = ?", input.Email).First(&user).Error; err != nil {
     helpers.JSONResponse(c, 400, false, "Email not found", nil)
     return
   }
