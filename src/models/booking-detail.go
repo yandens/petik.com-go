@@ -10,4 +10,5 @@ type BookingDetail struct {
   PassengerAge  int     `gorm:"not null"`
   NIK           string  `gorm:"not null"`
   SeatNumber    string  `gorm:"not null"`
+  QRCode        string  `gorm:"not null"`
 }

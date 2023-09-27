@@ -38,7 +38,7 @@ func VerifyEmail(c *gin.Context) {
 
   // get user
   var user models.User
-  if err := db.Joins("Role").Model(&models.User{}).Where("users.id = ?", claims["id"]).First(&user).Error; err != nil {
+  if err := db.Preload("Role").Model(&models.User{}).Where("users.id = ?", claims["id"]).First(&user).Error; err != nil {
     helpers.JSONResponse(c, 400, false, "User not found", nil)
     return
   }

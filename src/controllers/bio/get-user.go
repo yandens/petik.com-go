@@ -24,7 +24,7 @@ func GetUser(c *gin.Context) {
 
   // get user
   var user models.User
-  if err := db.Joins("Role").Joins("UserBio").Model(&models.User{}).Where("users.id = ?", id).First(&user).Error; err != nil {
+  if err := db.Preload("Role").Preload("UserBio").Model(&models.User{}).Where("users.id = ?", id).First(&user).Error; err != nil {
     helpers.JSONResponse(c, 400, false, "User not found", nil)
     return
   }

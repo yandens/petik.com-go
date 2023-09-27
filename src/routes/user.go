@@ -6,6 +6,7 @@ import (
   "github.com/yandens/petik.com-go/src/controllers/booking"
   "github.com/yandens/petik.com-go/src/controllers/notification"
   "github.com/yandens/petik.com-go/src/controllers/payment"
+  "github.com/yandens/petik.com-go/src/controllers/ticket"
   "github.com/yandens/petik.com-go/src/middlewares"
 )
 
@@ -29,4 +30,7 @@ func UserRoutes(router *gin.RouterGroup) {
 
   // notification routes
   userRoute.GET("/get-notifications", notification.GetNotifications)
+
+  // ticket routes
+  userRoute.GET("/get-ticket/:id", ticket.GetTicket)
 }

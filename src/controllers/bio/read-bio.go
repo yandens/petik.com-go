@@ -24,7 +24,7 @@ func ReadBio(c *gin.Context) {
 
   // get user bio
   var userBio models.UserBio
-  if err := db.Joins("User").Model(&models.UserBio{}).Where("user_id = ?", id).First(&userBio).Error; err != nil {
+  if err := db.Preload("User").Model(&models.UserBio{}).Where("user_id = ?", id).First(&userBio).Error; err != nil {
     helpers.JSONResponse(c, 400, false, "User bio not found", nil)
     return
   }

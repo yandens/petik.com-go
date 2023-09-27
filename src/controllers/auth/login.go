@@ -31,7 +31,7 @@ func Login(c *gin.Context) {
   }
 
   // find user by email
-  err = db.Joins("Role").Model(&models.User{}).Where("email = ?", input.Email).First(&user).Error
+  err = db.Preload("Role").Model(&models.User{}).Where("email = ?", input.Email).First(&user).Error
   if err != nil {
     helpers.JSONResponse(c, 500, false, "Incorrect Email or Password", nil)
     return
