@@ -1,6 +1,7 @@
 package ticket
 
 import (
+  "fmt"
   "github.com/gin-gonic/gin"
   "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/models"
@@ -54,8 +55,11 @@ func CreateTicket(c *gin.Context, db *gorm.DB, booking models.Booking) error {
       return err
     }
 
+    // ganerate unique filename based on timestamp
+    filename := fmt.Sprintf("%d%d-%d.png", ticket.UserID, ticket.BookingDetailID, time.Now().UnixNano())
+
     // upload qr code to imagekit
-    url, err := helpers.UploadToImagekit(c, qrCode, "qr-code", "/qr-codes")
+    url, err := helpers.UploadToImagekit(c, qrCode, filename, "/qr-codes")
     if err != nil {
       return err
     }
