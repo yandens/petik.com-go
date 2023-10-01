@@ -1,0 +1,93 @@
+version: 2
+
+jobs:
+  prepare:
+    working_directory: /tmp/project
+    docker:
+      - image: google/cloud-sdk:latest
+    steps:
+      - checkout
+      - run:
+          name: Active Service Account
+          command: |
+            echo $GOOGLE_CREDENTIALS > credentials.json
+            gcloud auth activate-service-account --key-file=credentials.json
+      - run:
+          name: Configure GCP Project
+          command: |
+            gcloud config set project $GOOGLE_PROJECT_ID
+            gcloud config set compute/region $GOOGLE_COMPUTE_REGION
+            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE
+      - run:
+          name: Configure GKE Cluster
+          command: |
+            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER
+      - run:
+          name: Configure Artifact Registry
+          command: |
+            gcloud auth configure-docker $GAR_LOCATION-docker.pkg.dev
+      - run:
+          name: Install kubectl
+          command: |
+            curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl
+            chmod +x ./kubectl
+            sudo mv ./kubectl /usr/local/bin/kubectl
+      - persist_to_workspace:
+        root: .
+        paths:
+          - .
+
+  build:
+    docker:
+      - image: google/cloud-sdk:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Clear Docker Cache
+          command: |
+            docker builder prune -a -f
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build Docker Image and Push to Artifact Registry
+          command: |
+            docker build -t $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$CIRCLE_SHA1 .
+            docker tag $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$CIRCLE_SHA1 $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:latest
+            docker push $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:latest
+      - persist_to_workspace:
+        root: .
+        paths:
+          - .
+
+  deploy:
+    docker:
+      - image: google/cloud-sdk:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Configure deployment.yaml
+          command: |
+            sed -i -e 's~ENV_GAR_LOCATION~'"$GAR_LOCATION"'~g' deployment.yaml
+            sed -i -e 's~ENV_REPOSITORY~'"$REPOSITORY"'~g' deployment.yaml
+            sed -i -e 's~ENV_IMAGE~'"$IMAGE"'~g' deployment.yaml
+            sed -i -e 's~ENV_PROJECT_ID~'"$PROJECT_ID"'~g' deployment.yaml
+            sed -i -e 's~ENV_CIRCLE_SHA~'"CIRCLE_SHA1"'~g' deployment.yaml
+      - run:
+          name: Deploy to GKE
+          command: |
+            kubectl create -f deployment.yaml
+            kubectl create -f service.yaml
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - prepare
+      - build:
+          requires:
+            - prepare
+      - deploy:
+          requires:
+            - build
