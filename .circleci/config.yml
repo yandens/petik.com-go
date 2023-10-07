@@ -33,9 +33,9 @@ jobs:
             chmod +x ./kubectl
             sudo mv ./kubectl /usr/local/bin/kubectl
       - persist_to_workspace:
-        root: .
-        paths:
-          - .
+          root: /tmp/project
+          paths:
+            - .
 
 #  prepare-prod:
 #    working_directory: /tmp/project
