@@ -12,14 +12,3 @@ spec:
       name: petik-backend-api-service
       port:
         number: 80
-  rules:
-    - host: ""
-      http:
-        paths:
-          - path: /*
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: petik-backend-api-service
-                port:
-                  number: 80
