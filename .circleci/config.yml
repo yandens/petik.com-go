@@ -21,7 +21,7 @@ jobs:
       - run:
           name: Configure GKE Cluster
           command: |
-            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV
+            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV --zone $GOOGLE_COMPUTE_ZONE_DEV
       - run:
           name: Configure Artifact Registry
           command: |
@@ -57,7 +57,7 @@ jobs:
       - run:
           name: Configure GKE Cluster
           command: |
-            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_PROD
+            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_PROD --zone $GOOGLE_COMPUTE_ZONE_PROD
       - run:
           name: Configure Artifact Registry
           command: |
