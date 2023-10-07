@@ -94,7 +94,7 @@ jobs:
             docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
             docker push $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
       - persist_to_workspace:
-        root: /tmp/project
+        root: .
         paths:
           - .
 
