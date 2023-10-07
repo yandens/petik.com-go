@@ -23,10 +23,6 @@ jobs:
           command: |
             gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV --zone $GOOGLE_COMPUTE_ZONE_DEV
       - run:
-          name: Configure Artifact Registry
-          command: |
-            gcloud auth configure-docker $GAR_LOCATION_DEV-docker.pkg.dev
-      - run:
           name: Install kubectl
           command: |
             apt install sudo
@@ -86,6 +82,10 @@ jobs:
 #            docker builder prune -a -f
       - setup_remote_docker:
           docker_layer_caching: true
+      - run:
+          name: Configure Artifact Registry
+          command: |
+            gcloud auth configure-docker $GAR_LOCATION_DEV-docker.pkg.dev
       - run:
           name: Build Docker Image and Push to Artifact Registry
           command: |
