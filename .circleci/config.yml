@@ -29,6 +29,7 @@ jobs:
       - run:
           name: Install kubectl
           command: |
+            apt install sudo
             curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl
             chmod +x ./kubectl
             sudo mv ./kubectl /usr/local/bin/kubectl
@@ -78,7 +79,7 @@ jobs:
       - image: google/cloud-sdk:latest
     steps:
       - attach_workspace:
-          at: .
+          at: /tmp/project
       - run:
           name: Clear Docker Cache
           command: |
@@ -93,7 +94,7 @@ jobs:
             docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
             docker push $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
       - persist_to_workspace:
-        root: .
+        root: /tmp/project
         paths:
           - .
 
@@ -126,7 +127,7 @@ jobs:
       - image: google/cloud-sdk:latest
     steps:
       - attach_workspace:
-          at: .
+          at: /tmp/project
       - run:
           name: Configure deployment.yaml
           command: |
