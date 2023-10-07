@@ -80,12 +80,12 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-#      - run:
-#          name: Clear Docker Cache
-#          command: |
-#            docker builder prune -a -f
-#      - setup_remote_docker:
-#          docker_layer_caching: true
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Clear Docker Cache
+          command: |
+            docker builder prune -a -f
       - run:
           name: Build Docker Image and Push to Artifact Registry
           command: |
