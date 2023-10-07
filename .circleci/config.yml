@@ -84,13 +84,11 @@ jobs:
 #          name: Clear Docker Cache
 #          command: |
 #            docker builder prune -a -f
-      - setup_remote_docker:
-          docker_layer_caching: true
+#      - setup_remote_docker:
+#          docker_layer_caching: true
       - run:
           name: Build Docker Image and Push to Artifact Registry
           command: |
-            echo $GOOGLE_CREDENTIALS_DEV > credentials.json
-            gcloud auth activate-service-account --key-file=credentials.json
             sed -i -e 's~PORT~'"$IMAGE_PORT_DEV"'~g' Dockerfile
             docker build -t $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 .
             docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
