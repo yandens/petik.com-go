@@ -34,7 +34,7 @@ jobs:
             chmod +x ./kubectl
             sudo mv ./kubectl /usr/local/bin/kubectl
       - persist_to_workspace:
-          root: /tmp/project
+          root: .
           paths:
             - .
 
@@ -79,7 +79,7 @@ jobs:
       - image: google/cloud-sdk:latest
     steps:
       - attach_workspace:
-          at: /tmp/project
+          at: .
 #      - run:
 #          name: Clear Docker Cache
 #          command: |
@@ -94,9 +94,9 @@ jobs:
             docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
             docker push $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
       - persist_to_workspace:
-        root: .
-        paths:
-          - .
+          root: .
+          paths:
+            - .
 
 #  build-prod:
 #    docker:
@@ -127,7 +127,7 @@ jobs:
       - image: google/cloud-sdk:latest
     steps:
       - attach_workspace:
-          at: /tmp/project
+          at: .
       - run:
           name: Configure deployment.yaml
           command: |
