@@ -23,6 +23,10 @@ jobs:
           command: |
             gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV --zone $GOOGLE_COMPUTE_ZONE_DEV
       - run:
+          name: Configure Artifact Registry
+          command: |
+            gcloud auth configure-docker $GAR_LOCATION_DEV-docker.pkg.dev
+      - run:
           name: Install kubectl
           command: |
             apt install sudo
@@ -83,12 +87,10 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
-          name: Configure Artifact Registry
-          command: |
-            gcloud auth configure-docker $GAR_LOCATION_DEV-docker.pkg.dev
-      - run:
           name: Build Docker Image and Push to Artifact Registry
           command: |
+            echo $GOOGLE_CREDENTIALS_DEV > credentials.json
+            gcloud auth activate-service-account --key-file=credentials.json
             sed -i -e 's~PORT~'"$IMAGE_PORT_DEV"'~g' Dockerfile
             docker build -t $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 .
             docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
