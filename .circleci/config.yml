@@ -25,10 +25,7 @@ jobs:
       - run:
           name: Configure Artifact Registry
           command: |
-            gcloud auth print-access-token \
-              --impersonate-service-account $GOOGLE_SERVICE_ACCOUNT_EMAIL_DEV | docker login \
-              -u oauth2accesstoken \
-              --password-stdin https://$GAR_LOCATION_DEV-docker.pkg.dev
+            gcloud auth configure-docker $GAR_LOCATION_DEV-docker.pkg.dev
       - run:
           name: Install kubectl
           command: |
@@ -93,9 +90,9 @@ jobs:
           name: Build Docker Image and Push to Artifact Registry
           command: |
             sed -i -e 's~PORT~'"$IMAGE_PORT_DEV"'~g' Dockerfile
-            docker build -t $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 .
-            docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
-            docker push $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
+            docker build -t "$GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1" .
+            docker tag "$GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1" "$GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest"
+            docker push "$GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest"
       - persist_to_workspace:
           root: .
           paths:
