@@ -26,7 +26,7 @@ jobs:
           name: Configure Artifact Registry
           command: |
             gcloud auth print-access-token \
-              --impersonate-service-account $GOOGLE_CREDENTIALS_DEV | docker login \
+              --impersonate-service-account $GOOGLE_SERVICE_ACCOUNT_EMAIL_DEV | docker login \
               -u oauth2accesstoken \
               --password-stdin https://$GAR_LOCATION_DEV-docker.pkg.dev
       - run:
