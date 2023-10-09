@@ -124,7 +124,7 @@ jobs:
       - run:
           name: Check kubectl is installed
           command: |
-            kubectl cluster-info
+            kubectl version --client
       - run:
           name: Configure deployment.yaml
           command: |
