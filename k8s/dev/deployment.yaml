@@ -98,7 +98,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: petik-backend-api-secret
-                  key: APP_URL\
+                  key: APP_URL
             - name: ADMIN_EMAIL
               valueFrom:
                 secretKeyRef:
