@@ -139,10 +139,10 @@ jobs:
       - run:
           name: Deploy to GKE
           command: |
-            kubectl create -f k8s/dev/deployment.yaml
-            kubectl create -f k8s/dev/service.yaml
-            kubectl create -f k8s/dev/cert.yaml
-            kubectl create -f k8s/dev/ingress.yaml
+            kubectl apply -f k8s/dev/deployment.yaml
+            kubectl apply -f k8s/dev/service.yaml
+            kubectl apply -f k8s/dev/cert.yaml
+            kubectl apply -f k8s/dev/ingress.yaml
 
 #  deploy-prod:
 #    docker:
@@ -175,10 +175,10 @@ jobs:
 #      - run:
 #          name: Deploy to GKE
 #          command: |
-#            kubectl create -f k8s/prod/deployment.yaml
-#            kubectl create -f k8s/prod/service.yaml
-#            kubectl create -f k8s/prod/ingress.yaml
-#            kubectl create -f k8s/prod/cert.yaml
+#            kubectl apply -f k8s/prod/deployment.yaml
+#            kubectl apply -f k8s/prod/service.yaml
+#            kubectl apply -f k8s/prod/ingress.yaml
+#            kubectl apply -f k8s/prod/cert.yaml
 
 workflows:
   version: 2
