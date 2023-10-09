@@ -72,16 +72,16 @@ jobs:
           command: |
             echo $GOOGLE_CREDENTIALS_DEV > credentials.json
             gcloud auth activate-service-account --key-file=credentials.json
-      - run:
-          name: Configure GCP Project
-          command: |
-            gcloud config set project $GOOGLE_PROJECT_ID_DEV
-            gcloud config set compute/region $GOOGLE_COMPUTE_REGION_DEV
-            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE_DEV
-      - run:
-          name: Configure GKE Cluster
-          command: |
-            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV --zone $GOOGLE_COMPUTE_ZONE_DEV
+#      - run:
+#          name: Configure GCP Project
+#          command: |
+#            gcloud config set project $GOOGLE_PROJECT_ID_DEV
+#            gcloud config set compute/region $GOOGLE_COMPUTE_REGION_DEV
+#            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE_DEV
+#      - run:
+#          name: Configure GKE Cluster
+#          command: |
+#            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV --zone $GOOGLE_COMPUTE_ZONE_DEV
       - run:
           name: Configure Artifact Registry
           command: |
