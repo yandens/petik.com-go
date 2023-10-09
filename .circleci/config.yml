@@ -30,24 +30,9 @@ jobs:
 #    steps:
 #      - checkout
 #      - run:
-#          name: Active Service Account
+#          name: Make credentials.json
 #          command: |
 #            echo $GOOGLE_CREDENTIALS_PROD > credentials.json
-#            gcloud auth activate-service-account --key-file=credentials.json
-#      - run:
-#          name: Configure GCP Project
-#          command: |
-#            gcloud config set project $GOOGLE_PROJECT_ID_PROD
-#            gcloud config set compute/region $GOOGLE_COMPUTE_REGION_PROD
-#            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE_PROD
-#      - run:
-#          name: Configure GKE Cluster
-#          command: |
-#            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_PROD --zone $GOOGLE_COMPUTE_ZONE_PROD
-#      - run:
-#          name: Configure Artifact Registry
-#          command: |
-#            gcloud auth configure-docker $GAR_LOCATION_PROD-docker.pkg.dev
 #      - run:
 #          name: Install kubectl
 #          command: |
@@ -104,6 +89,14 @@ jobs:
 #      - setup_remote_docker:
 #          docker_layer_caching: true
 #      - run:
+#          name: Active Service Account
+#          command: |
+#            gcloud auth activate-service-account --key-file=credentials.json
+#      - run:
+#          name: Configure Artifact Registry
+#          command: |
+#            gcloud auth configure-docker $GAR_LOCATION_PROD-docker.pkg.dev
+#      - run:
 #          name: Build Docker Image and Push to Artifact Registry
 #          command: |
 #            sed -i -e 's~PORT~'"$IMAGE_PORT_PROD"'~g' Dockerfile
@@ -125,6 +118,12 @@ jobs:
           name: Active Service Account
           command: |
             gcloud auth activate-service-account --key-file=credentials.json
+      - run:
+          name: Configure GCP Project
+          command: |
+            gcloud config set project $GOOGLE_PROJECT_ID_DEV
+            gcloud config set compute/region $GOOGLE_COMPUTE_REGION_DEV
+            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE_DEV
       - run:
           name: Configure GKE Cluster
           command: |
@@ -151,6 +150,20 @@ jobs:
 #    steps:
 #      - attach_workspace:
 #          at: .
+#      - run:
+#          name: Active Service Account
+#          command: |
+#            gcloud auth activate-service-account --key-file=credentials.json
+#      - run:
+#          name: Configure GCP Project
+#          command: |
+#            gcloud config set project $GOOGLE_PROJECT_ID_PROD
+#            gcloud config set compute/region $GOOGLE_COMPUTE_REGION_PROD
+#            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE_PROD
+#      - run:
+#          name: Configure GKE Cluster
+#          command: |
+#            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_PROD --zone $GOOGLE_COMPUTE_ZONE_PROD
 #      - run:
 #          name: Configure deployment.yaml
 #          command: |
