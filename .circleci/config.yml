@@ -122,9 +122,13 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Check kubectl is installed
+          name: Active Service Account
           command: |
-            kubectl version --client
+            gcloud auth activate-service-account --key-file=credentials.json
+      - run:
+          name: Configure GKE Cluster
+          command: |
+            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV --zone $GOOGLE_COMPUTE_ZONE_DEV
       - run:
           name: Configure deployment.yaml
           command: |
