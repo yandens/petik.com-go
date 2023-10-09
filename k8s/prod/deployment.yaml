@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: petik-backend-api-service
-          image: ENV_GAR_LOCATION-docker.pkg.dev/ENV_PROJECT_ID/ENV_REPOSITORY/ENV_IMAGE:CIRCLE_SHA
+          image: ENV_GAR_LOCATION-docker.pkg.dev/ENV_PROJECT_ID/ENV_REPOSITORY/ENV_IMAGE:ENV_CIRCLE_SHA
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
