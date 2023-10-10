@@ -89,6 +89,11 @@ spec:
                 secretKeyRef:
                   name: petik-backend-api-secret
                   key: PORT
+            - name: HOST
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: HOST
             - name: AIRLABS_API_KEY
               valueFrom:
                 secretKeyRef:
