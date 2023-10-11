@@ -19,7 +19,7 @@ spec:
           ports:
             - containerPort: 3000
           volumeMounts:
-            - mountPath: .
+            - mountPath: env
               name: env
       volumes:
         - name: env
