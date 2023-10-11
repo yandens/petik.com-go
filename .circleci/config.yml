@@ -135,7 +135,6 @@ jobs:
             sed -i -e 's~ENV_REPOSITORY~'"$GAR_REPOSITORY_DEV"'~g' k8s/dev/deployment.yaml
             sed -i -e 's~ENV_IMAGE~'"$IMAGE_DEV"'~g' k8s/dev/deployment.yaml
             sed -i -e 's~ENV_PROJECT_ID~'"$GOOGLE_PROJECT_ID_DEV"'~g' k8s/dev/deployment.yaml
-            sed -i -e 's~ENV_CIRCLE_SHA~'"$CIRCLE_SHA1"'~g' k8s/dev/deployment.yaml
       - run:
           name: Deploy to GKE
           command: |
@@ -171,7 +170,6 @@ jobs:
 #            sed -i -e 's~ENV_REPOSITORY~'"$GAR_REPOSITORY_PROD"'~g' k8s/prod/deployment.yaml
 #            sed -i -e 's~ENV_IMAGE~'"$IMAGE_PROD"'~g' k8s/prod/deployment.yaml
 #            sed -i -e 's~ENV_PROJECT_ID~'"$GOOGLE_PROJECT_ID_PROD"'~g' k8s/prod/deployment.yaml
-#            sed -i -e 's~ENV_CIRCLE_SHA~'"CIRCLE_SHA1"'~g' k8s/prod/deployment.yaml
 #      - run:
 #          name: Deploy to GKE
 #          command: |
