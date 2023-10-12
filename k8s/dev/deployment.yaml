@@ -22,7 +22,7 @@ spec:
             - secretRef:
                 name: petik-backend-api-secret
           volumeMounts:
-            - mountPath: .env
+            - mountPath: /app/.env
               name: dotenv
       volumes:
         - name: dotenv

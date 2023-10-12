@@ -6,7 +6,7 @@ import (
 
 func GetEnv(env string) string {
   //err := godotenv.Load("../.env")
-  byte, err := ioutil.ReadFile("/petik-backend-api-secret/" + env)
+  byte, err := ioutil.ReadFile("/app/.env/" + env)
   if err != nil {
     panic(err)
   }
