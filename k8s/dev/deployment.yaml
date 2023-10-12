@@ -18,10 +18,109 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
-          volumeMounts:
-            - mountPath: env
-              name: env
-      volumes:
-        - name: env
-          secret:
-            secretName: petik-backend-api-secret
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: DB_PASSWORD
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: DB_NAME
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: GOOGLE_CLIENT_SECRET
+            - name: GOOGLE_REDIRECT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: GOOGLE_REDIRECT_URL
+            - name: EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: EMAIL_USERNAME
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: EMAIL_PASSWORD
+            - name: IMAGEKIT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: IMAGEKIT_PRIVATE_KEY
+            - name: IMAGEKIT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: IMAGEKIT_PUBLIC_KEY
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: JWT_SECRET
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: PORT
+            - name: HOST
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: HOST
+            - name: AIRLABS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: AIRLABS_API_KEY
+            - name: APP_URL
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: APP_URL
+            - name: ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: ADMIN_EMAIL
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: ADMIN_PASSWORD
+            - name: USER_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: USER_EMAIL
+            - name: USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: petik-backend-api-secret
+                  key: USER_PASSWORD
