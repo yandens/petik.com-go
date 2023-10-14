@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: petik-backend-api-service
 spec:
+  selector:
+    app: petik-backend-api
   ports:
     - protocol: TCP
       port: 80
       targetPort: 3000
   type: LoadBalancer
-  selector:
-    app: petik-backend-api
