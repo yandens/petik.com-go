@@ -140,8 +140,8 @@ jobs:
           command: |
             kubectl apply -f k8s/dev/deployment.yaml
             kubectl apply -f k8s/dev/service.yaml
-#            kubectl apply -f k8s/dev/cert.yaml
-#            kubectl apply -f k8s/dev/ingress.yaml
+            kubectl apply -f k8s/dev/cert.yaml
+            kubectl apply -f k8s/dev/ingress.yaml
 
 #  deploy-prod:
 #    docker:
