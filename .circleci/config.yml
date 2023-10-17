@@ -144,6 +144,8 @@ jobs:
             kubectl apply -f k8s/dev/service.yaml
             kubectl apply -f k8s/dev/cert.yaml
             kubectl apply -f k8s/dev/ingress.yaml
+            kubectl rollout status deployment/petik-backend-api
+            kubectl get services -o wide
 
 #  deploy-prod:
 #    docker:
