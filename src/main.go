@@ -4,10 +4,13 @@ import (
   "fmt"
   "github.com/gin-contrib/cors"
   "github.com/gin-gonic/gin"
+  "github.com/go-co-op/gocron"
   socketio "github.com/googollee/go-socket.io"
   "github.com/yandens/petik.com-go/src/configs"
+  "github.com/yandens/petik.com-go/src/controllers/flight"
   "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/routes"
+  "time"
 )
 
 func main() {
@@ -47,17 +50,17 @@ func main() {
   // flight routes
   routes.FlightRoutes(api)
 
-  //// cron jobs to automate flight seeder
-  //s := gocron.NewScheduler(time.UTC)
-  //
-  //// delete seeder every 1 week at 23:59
-  //s.Every(1).Week().Weekday(time.Sunday).At("23:59").Do(flight.DeleteFlightSeeder)
-  //
-  //// update seeder every 1 week at 00:00
-  //s.Every(1).Week().Weekday(time.Monday).At("00:00").Do(flight.CreateFlightSeeder)
-  //
-  //// start cron job
-  //s.StartBlocking()
+  // cron jobs to automate flight seeder
+  s := gocron.NewScheduler(time.UTC)
+
+  // delete seeder every 1 week at 23:59
+  s.Every(1).Week().Weekday(time.Sunday).At("23:59").Do(flight.DeleteFlightSeeder)
+
+  // update seeder every 1 week at 00:00
+  s.Every(1).Week().Weekday(time.Monday).At("00:00").Do(flight.CreateFlightSeeder)
+
+  // start cron job
+  s.StartBlocking()
 
   // socket io
   server := socketio.NewServer(nil)
