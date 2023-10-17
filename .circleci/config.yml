@@ -67,7 +67,9 @@ jobs:
       - run:
           name: Build Docker Image and Push to Artifact Registry
           command: |
+            echo $IMAGE_PORT_DEV
             sed -i -e 's~PORT~'"$IMAGE_PORT_DEV"'~g' Dockerfile
+            cat Dockerfile
             docker build -t $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 .
             docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
             docker push $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
