@@ -4,4 +4,4 @@ metadata:
   name: petik-backend-api-certificate
 spec:
   domains:
-    -
+    - petik.xyz

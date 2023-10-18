@@ -13,7 +13,7 @@ spec:
       port:
         number: 80
   rules:
-    - host: ""
+    - host: "petik.xyz"
       http:
         paths:
           - path: /*
