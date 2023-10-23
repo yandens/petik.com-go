@@ -4,19 +4,17 @@ import (
   "fmt"
   "github.com/gin-contrib/cors"
   "github.com/gin-gonic/gin"
-  "github.com/go-co-op/gocron"
   socketio "github.com/googollee/go-socket.io"
   "github.com/yandens/petik.com-go/src/configs"
-  "github.com/yandens/petik.com-go/src/controllers/flight"
   "github.com/yandens/petik.com-go/src/helpers"
   "github.com/yandens/petik.com-go/src/routes"
-  "time"
 )
 
 func main() {
   //db.MigrateAll()
   //db.RollbackAll()
   //db.SeedAll()
+  //flight.CreateFlightSeeder()
   router := gin.Default()
 
   router.Use(cors.New(cors.Config{
@@ -49,18 +47,6 @@ func main() {
 
   // flight routes
   routes.FlightRoutes(api)
-
-  // cron jobs to automate flight seeder
-  s := gocron.NewScheduler(time.UTC)
-
-  // every 1 week do delete all flights
-  s.Every(1).Week().Do(flight.DeleteFlightSeeder)
-
-  // every 1 week do seed flights after complete delete all flights
-  s.Every(1).Week().Do(flight.CreateFlightSeeder)
-
-  // start cron jobs
-  s.StartBlocking()
 
   // socket io
   server := socketio.NewServer(nil)
