@@ -59,6 +59,9 @@ func main() {
   // every 1 week do seed flights after complete delete all flights
   s.Every(1).Week().Do(flight.CreateFlightSeeder)
 
+  // start cron jobs
+  s.StartBlocking()
+
   // socket io
   server := socketio.NewServer(nil)
 
