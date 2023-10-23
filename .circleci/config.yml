@@ -142,7 +142,7 @@ jobs:
             kubectl apply -f k8s/dev/service.yaml
             kubectl apply -f k8s/dev/cert.yaml
             kubectl apply -f k8s/dev/ingress.yaml
-            kubectl rollout status deployment/renata-backend-api  
+            kubectl rollout status deployment/petik-backend-api  
 
   deploy-prod:
     docker:
@@ -178,7 +178,7 @@ jobs:
             kubectl apply -f k8s/prod/service.yaml
             kubectl apply -f k8s/prod/ingress.yaml
             kubectl apply -f k8s/prod/cert.yaml
-            kubectl rollout status deployment/renata-backend-api
+            kubectl rollout status deployment/petik-backend-api
 
 workflows:
   version: 2
