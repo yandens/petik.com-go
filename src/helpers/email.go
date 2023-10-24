@@ -54,7 +54,7 @@ func SendEmailAuth(user models.User, endpoint string, header string) {
     URL: fmt.Sprintf("%s/api/auth/%s?token=%s", configs.GetEnv("APP_URL"), endpoint, token),
   }
 
-  // use html templates based on endpoint
+  // use html template based on endpoint
   var result string
   if endpoint == "verify-email" {
     result, err = parseTemplate("templates/verify-email.html", templateData)
