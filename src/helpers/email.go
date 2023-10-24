@@ -57,10 +57,10 @@ func SendEmailAuth(user models.User, endpoint string, header string) {
   // use html templates based on endpoint
   var result string
   if endpoint == "verify-email" {
-    result, err = parseTemplate("./../templates/verify-email.html", templateData)
+    result, err = parseTemplate("templates/verify-email.html", templateData)
     fmt.Println(err)
   } else {
-    result, err = parseTemplate("./../templates/reset-password.html", templateData)
+    result, err = parseTemplate("templates/reset-password.html", templateData)
     fmt.Println(err)
   }
 
@@ -99,7 +99,7 @@ func SendEmailBookingConfirmation(userBio models.UserBio, flight models.Flight, 
   }
 
   // parse html template
-  result, _ := parseTemplate("./../templates/booking.html", templateData)
+  result, _ := parseTemplate("templates/booking.html", templateData)
 
   // send email
   if err := sendEmail(userBio.User.Email, header, result); err != nil {
@@ -128,7 +128,7 @@ func SendEmailPaymentConfirmation(userBio models.UserBio, payment models.Payment
   }
 
   // parse html template
-  result, _ := parseTemplate("./../templates/payment.html", templateData)
+  result, _ := parseTemplate("templates/payment.html", templateData)
 
   // send email
   if err := sendEmail(userBio.User.Email, header, result); err != nil {
