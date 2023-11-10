@@ -40,9 +40,9 @@ jobs:
             chmod +x ./kubectl
             sudo mv ./kubectl /usr/local/bin/kubectl
       - persist_to_workspace:
-        root: .
-        paths:
-          - .
+          root: .
+          paths:
+            - .
 
   build-dev:
     docker:
@@ -104,9 +104,9 @@ jobs:
             docker tag $GAR_LOCATION_PROD-docker.pkg.dev/$GOOGLE_PROJECT_ID_PROD/$GAR_REPOSITORY_PROD/$IMAGE_PROD:$CIRCLE_SHA1 $GAR_LOCATION_PROD-docker.pkg.dev/$GOOGLE_PROJECT_ID_PROD/$GAR_REPOSITORY_PROD/$IMAGE_PROD:latest
             docker push $GAR_LOCATION_PROD-docker.pkg.dev/$GOOGLE_PROJECT_ID_PROD/$GAR_REPOSITORY_PROD/$IMAGE_PROD:latest
       - persist_to_workspace:
-        root: .
-        paths:
-          - .
+          root: .
+          paths:
+            - .
 
   deploy-dev:
     docker:
