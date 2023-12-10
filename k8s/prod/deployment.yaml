@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petik-backend-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: petik-backend-api
+  template:
+    metadata:
+      labels:
+        app: petik-backend-api
+    spec:
+      containers:
+        - name: petik-backend-api-service
+          image: ENV_GAR_LOCATION-docker.pkg.dev/ENV_PROJECT_ID/ENV_REPOSITORY/ENV_IMAGE:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: petik-backend-api-secret
+          volumeMounts:
+            - mountPath: /app/.env
+              name: dotenv
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 3000
+              scheme: HTTP
+      volumes:
+        - name: dotenv
+          secret:
+            secretName: petik-backend-api-secret
