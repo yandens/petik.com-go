@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  prepare-dev:
+  prepare:
     working_directory: /tmp/project
     docker:
       - image: google/cloud-sdk:latest
@@ -10,29 +10,7 @@ jobs:
       - run:
           name: Make credentials.json
           command: |
-            echo $GOOGLE_CREDENTIALS_DEV > credentials.json
-      - run:
-          name: Install kubectl
-          command: |
-            apt install sudo
-            curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl
-            chmod +x ./kubectl
-            sudo mv ./kubectl /usr/local/bin/kubectl
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-
-  prepare-prod:
-    working_directory: /tmp/project
-    docker:
-      - image: google/cloud-sdk:latest
-    steps:
-      - checkout
-      - run:
-          name: Make credentials.json
-          command: |
-            echo $GOOGLE_CREDENTIALS_PROD > credentials.json
+            echo $GOOGLE_CREDENTIALS > credentials.json
       - run:
           name: Install kubectl
           command: |
@@ -44,39 +22,7 @@ jobs:
           paths:
             - .
 
-  build-dev:
-    docker:
-      - image: google/cloud-sdk:latest
-    steps:
-      - attach_workspace:
-          at: .
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Clear Docker Cache
-          command: |
-            docker builder prune -a -f
-      - run:
-          name: Active Service Account
-          command: |
-            gcloud auth activate-service-account --key-file=credentials.json
-      - run:
-          name: Configure Artifact Registry
-          command: |
-            gcloud auth configure-docker $GAR_LOCATION_DEV-docker.pkg.dev
-      - run:
-          name: Build Docker Image and Push to Artifact Registry
-          command: |
-            sed -i -e 's~PORT~'"$IMAGE_PORT_DEV"'~g' Dockerfile
-            docker build -t $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 .
-            docker tag $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:$CIRCLE_SHA1 $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
-            docker push $GAR_LOCATION_DEV-docker.pkg.dev/$GOOGLE_PROJECT_ID_DEV/$GAR_REPOSITORY_DEV/$IMAGE_DEV:latest
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-
-  build-prod:
+  build:
     docker:
       - image: google/cloud-sdk:latest
     steps:
@@ -95,20 +41,20 @@ jobs:
       - run:
           name: Configure Artifact Registry
           command: |
-            gcloud auth configure-docker $GAR_LOCATION_PROD-docker.pkg.dev
+            gcloud auth configure-docker $GAR_LOCATION-docker.pkg.dev
       - run:
           name: Build Docker Image and Push to Artifact Registry
           command: |
-            sed -i -e 's~PORT~'"$IMAGE_PORT_PROD"'~g' Dockerfile
-            docker build -t $GAR_LOCATION_PROD-docker.pkg.dev/$GOOGLE_PROJECT_ID_PROD/$GAR_REPOSITORY_PROD/$IMAGE_PROD:$CIRCLE_SHA1 .
-            docker tag $GAR_LOCATION_PROD-docker.pkg.dev/$GOOGLE_PROJECT_ID_PROD/$GAR_REPOSITORY_PROD/$IMAGE_PROD:$CIRCLE_SHA1 $GAR_LOCATION_PROD-docker.pkg.dev/$GOOGLE_PROJECT_ID_PROD/$GAR_REPOSITORY_PROD/$IMAGE_PROD:latest
-            docker push $GAR_LOCATION_PROD-docker.pkg.dev/$GOOGLE_PROJECT_ID_PROD/$GAR_REPOSITORY_PROD/$IMAGE_PROD:latest
+            sed -i -e 's~PORT~'"$IMAGE_PORT"'~g' Dockerfile
+            docker build -t $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$CIRCLE_SHA1 .
+            docker tag $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:$CIRCLE_SHA1 $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:latest
+            docker push $GAR_LOCATION-docker.pkg.dev/$GOOGLE_PROJECT_ID/$GAR_REPOSITORY/$IMAGE:latest
       - persist_to_workspace:
           root: .
           paths:
             - .
 
-  deploy-dev:
+  deploy:
     docker:
       - image: google/cloud-sdk:latest
     steps:
@@ -121,98 +67,46 @@ jobs:
       - run:
           name: Configure GCP Project
           command: |
-            gcloud config set project $GOOGLE_PROJECT_ID_DEV
-            gcloud config set compute/region $GOOGLE_COMPUTE_REGION_DEV
-            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE_DEV
+            gcloud config set project $GOOGLE_PROJECT_ID
+            gcloud config set compute/region $GOOGLE_COMPUTE_REGION
+            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE
       - run:
           name: Configure GKE Cluster
           command: |
-            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_DEV --zone $GOOGLE_COMPUTE_ZONE_DEV
+            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER --zone $GOOGLE_COMPUTE_ZONE
       - run:
           name: Configure deployment.yaml
           command: |
-            sed -i -e 's~ENV_GAR_LOCATION~'"$GAR_LOCATION_DEV"'~g' k8s/dev/deployment.yaml
-            sed -i -e 's~ENV_REPOSITORY~'"$GAR_REPOSITORY_DEV"'~g' k8s/dev/deployment.yaml
-            sed -i -e 's~ENV_IMAGE~'"$IMAGE_DEV"'~g' k8s/dev/deployment.yaml
-            sed -i -e 's~ENV_PROJECT_ID~'"$GOOGLE_PROJECT_ID_DEV"'~g' k8s/dev/deployment.yaml
+            sed -i -e 's~ENV_GAR_LOCATION~'"$GAR_LOCATION"'~g' k8s/prod/deployment.yaml
+            sed -i -e 's~ENV_REPOSITORY~'"$GAR_REPOSITORY"'~g' k8s/prod/deployment.yaml
+            sed -i -e 's~ENV_IMAGE~'"$IMAGE"'~g' k8s/prod/deployment.yaml
+            sed -i -e 's~ENV_PROJECT_ID~'"$GOOGLE_PROJECT_ID"'~g' k8s/prod/deployment.yaml
       - run:
           name: Deploy to GKE
           command: |
-            kubectl apply -f k8s/dev/deployment.yaml
-            kubectl apply -f k8s/dev/service.yaml
-            kubectl apply -f k8s/dev/cert.yaml
-            kubectl apply -f k8s/dev/ingress.yaml
-            kubectl rollout restart deployment/petik-backend-api
-
-  deploy-prod:
-    docker:
-      - image: google/cloud-sdk:latest
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: Active Service Account
-          command: |
-            gcloud auth activate-service-account --key-file=credentials.json
-      - run:
-          name: Configure GCP Project
-          command: |
-            gcloud config set project $GOOGLE_PROJECT_ID_PROD
-            gcloud config set compute/region $GOOGLE_COMPUTE_REGION_PROD
-            gcloud config set compute/zone $GOOGLE_COMPUTE_ZONE_PROD
-      - run:
-          name: Configure GKE Cluster
-          command: |
-            gcloud container clusters get-credentials $GOOGLE_COMPUTE_CLUSTER_PROD --zone $GOOGLE_COMPUTE_ZONE_PROD
-      - run:
-          name: Configure deployment.yaml
-          command: |
-            sed -i -e 's~ENV_GAR_LOCATION~'"$GAR_LOCATION_PROD"'~g' k8s/prod/deployment.yaml
-            sed -i -e 's~ENV_REPOSITORY~'"$GAR_REPOSITORY_PROD"'~g' k8s/prod/deployment.yaml
-            sed -i -e 's~ENV_IMAGE~'"$IMAGE_PROD"'~g' k8s/prod/deployment.yaml
-            sed -i -e 's~ENV_PROJECT_ID~'"$GOOGLE_PROJECT_ID_PROD"'~g' k8s/prod/deployment.yaml
-      - run:
-          name: Deploy to GKE
-          command: |
-            kubectl apply -f k8s/prod/deployment.yaml
-            kubectl apply -f k8s/prod/service.yaml
-            kubectl apply -f k8s/prod/ingress.yaml
-            kubectl apply -f k8s/prod/cert.yaml
+            kubectl apply -f k8s/deployment.yaml
+            kubectl apply -f k8s/service.yaml
+            kubectl apply -f k8s/ingress.yaml
+            kubectl apply -f k8s/cert.yaml
             kubectl rollout restart deployment/petik-backend-api
 
 workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - prepare-dev:
-          filters:
-            branches:
-              only: dev
-      - prepare-prod:
+      - prepare:
           filters:
             branches:
               only: main
-      - build-dev:
+      - build:
           requires:
-            - prepare-dev
-          filters:
-            branches:
-              only: dev
-      - build-prod:
-          requires:
-            - prepare-prod
+            - prepare
           filters:
             branches:
               only: main
-      - deploy-dev:
+      - deploy:
           requires:
-            - build-dev
-          filters:
-            branches:
-              only: dev
-      - deploy-prod:
-          requires:
-            - build-prod
+            - build
           filters:
             branches:
               only: main
