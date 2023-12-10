@@ -78,10 +78,10 @@ jobs:
       - run:
           name: Configure deployment.yaml
           command: |
-            sed -i -e 's~ENV_GAR_LOCATION~'"$GAR_LOCATION"'~g' k8s/prod/deployment.yaml
-            sed -i -e 's~ENV_REPOSITORY~'"$GAR_REPOSITORY"'~g' k8s/prod/deployment.yaml
-            sed -i -e 's~ENV_IMAGE~'"$IMAGE"'~g' k8s/prod/deployment.yaml
-            sed -i -e 's~ENV_PROJECT_ID~'"$GOOGLE_PROJECT_ID"'~g' k8s/prod/deployment.yaml
+            sed -i -e 's~ENV_GAR_LOCATION~'"$GAR_LOCATION"'~g' k8s/deployment.yaml
+            sed -i -e 's~ENV_REPOSITORY~'"$GAR_REPOSITORY"'~g' k8s/deployment.yaml
+            sed -i -e 's~ENV_IMAGE~'"$IMAGE"'~g' k8s/deployment.yaml
+            sed -i -e 's~ENV_PROJECT_ID~'"$GOOGLE_PROJECT_ID"'~g' k8s/deployment.yaml
       - run:
           name: Deploy to GKE
           command: |
