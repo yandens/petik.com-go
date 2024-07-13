@@ -3,8 +3,8 @@ kind: Ingress
 metadata:
   name: petik-backend-api-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: petik-gke-ip
-    networking.gke.io/managed-certificates: petik-backend-api-certificate
+    kubernetes.io/ingress.global-static-ip-name: iac-gke-ip
+    networking.gke.io/managed-certificates: iac-backend-api-certificate
     kubernetes.io/ingress.class: "gce"
 spec:
   defaultBackend:
