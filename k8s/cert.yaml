@@ -1,7 +1,7 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: petik-backend-api-certificate
+  name: iac-backend-api-certificate
 spec:
   domains:
     - petik.xyz
