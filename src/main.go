@@ -27,7 +27,7 @@ func main() {
   // routes
   // default route
   router.GET("/", func(c *gin.Context) {
-    helpers.JSONResponse(c, 200, true, "Server Running Good", nil)
+    helpers.JSONResponse(c, 200, true, "Server Running Well", nil)
   })
 
   // api group route
